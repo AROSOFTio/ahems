@@ -1,0 +1,14 @@
+node_modules/
+dist/
+build/
+.DS_Store
+.env
+.env.local
+.env.production
+coverage/
+*.log
+*.pid
+client/.vite/
+server/tmp/
+mysql-data/
+
