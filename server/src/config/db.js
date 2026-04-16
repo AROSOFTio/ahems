@@ -50,6 +50,7 @@ export function getPool() {
       password: env.mysqlPassword,
       charset: "utf8mb4",
       decimalNumbers: true,
+      connectTimeout: 5000,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,

@@ -4,16 +4,23 @@ import { logger } from "./config/logger.js";
 import { startSimulationScheduler } from "./jobs/simulationScheduler.js";
 import { ensureDatabaseBootstrapData } from "./services/bootstrapService.js";
 
-async function bootstrap() {
-  await ensureDatabaseBootstrapData();
-  startSimulationScheduler();
+let schedulerHandle = null;
 
-  app.listen(env.port, () => {
-    logger.info(`AHEMS API listening on port ${env.port}`);
-  });
+async function initializePlatform() {
+  try {
+    await ensureDatabaseBootstrapData();
+  } catch (error) {
+    logger.warn("Platform bootstrap completed with warnings.", {
+      message: error.message,
+    });
+  } finally {
+    if (!schedulerHandle) {
+      schedulerHandle = startSimulationScheduler();
+    }
+  }
 }
 
-bootstrap().catch((error) => {
-  logger.error("Failed to start the AHEMS API.", { message: error.message });
-  process.exit(1);
+app.listen(env.port, () => {
+  logger.info(`AHEMS API listening on port ${env.port}`);
+  void initializePlatform();
 });
