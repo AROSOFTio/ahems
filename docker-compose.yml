@@ -31,13 +31,15 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
       CLIENT_PUBLIC_URL: ${CLIENT_PUBLIC_URL}
-    depends_on:
-      - db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   db:
     image: mysql:8.0
     container_name: ahems_db
     restart: unless-stopped
+    profiles:
+      - local-db
     env_file:
       - .env
     environment:
@@ -68,4 +70,3 @@ services:
 
 volumes:
   ahems_mysql_data:
-

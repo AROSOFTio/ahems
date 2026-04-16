@@ -52,10 +52,10 @@ These are handled by the Phase 1 simulation-ready API:
    cp .env.example .env
    ```
 
-2. Build and run:
+2. Build and run with the optional local MySQL container:
 
    ```bash
-   docker compose up --build -d
+   docker compose --profile local-db up --build -d
    ```
 
 3. Open:
@@ -63,7 +63,7 @@ These are handled by the Phase 1 simulation-ready API:
    - App: `http://localhost:3002`
    - API health: `http://localhost:3002/api/health`
 
-## VPS Deployment
+## VPS Deployment With aaPanel-Managed MySQL
 
 Run these commands from the deployment directory:
 
@@ -76,6 +76,10 @@ docker compose ps
 curl -I http://127.0.0.1:3002
 curl http://127.0.0.1:3002/api/health
 ```
+
+If your aaPanel MySQL is running on the same VPS, keep `MYSQL_HOST=host.docker.internal`.
+If MySQL is on a separate server, set `MYSQL_HOST` to that host or IP instead.
+Import `database/schema/001_ahems_schema.sql` and `database/seed/001_seed_roles_and_demo.sql` into the aaPanel database before starting the stack.
 
 ## Rebuild / Restart
 
@@ -91,4 +95,3 @@ docker compose logs -f nginx backend
 - `phpMyAdmin` is intentionally excluded from Docker because it is already managed separately in aaPanel.
 - The UI and API are structured for simulation-first workflows, with hardware integrations explicitly out of scope.
 - The database schema already includes the core entities required for role management, automation, sensing, monitoring, reporting, and auditability.
-
