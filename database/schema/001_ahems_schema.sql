@@ -61,11 +61,26 @@ CREATE TABLE IF NOT EXISTS rooms (
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uniq_rooms_owner_name (owner_user_id, name),
   INDEX idx_rooms_owner (owner_user_id),
   INDEX idx_rooms_type (room_type_id),
   INDEX idx_rooms_occupancy (occupancy_state),
   CONSTRAINT fk_rooms_owner FOREIGN KEY (owner_user_id) REFERENCES users(id) ON DELETE CASCADE,
   CONSTRAINT fk_rooms_type FOREIGN KEY (room_type_id) REFERENCES room_types(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS user_room_assignments (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  room_id BIGINT UNSIGNED NOT NULL,
+  assignment_type ENUM('OWNER', 'OPERATOR', 'VIEWER') NOT NULL DEFAULT 'OPERATOR',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uniq_user_room_assignment (user_id, room_id, assignment_type),
+  INDEX idx_user_room_assignments_user (user_id),
+  INDEX idx_user_room_assignments_room (room_id),
+  CONSTRAINT fk_user_room_assignments_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_user_room_assignments_room FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS appliance_categories (
@@ -95,6 +110,7 @@ CREATE TABLE IF NOT EXISTS appliances (
   last_state_changed_at DATETIME NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uniq_appliances_room_name (room_id, name),
   INDEX idx_appliances_room (room_id),
   INDEX idx_appliances_category (category_id),
   INDEX idx_appliances_status (status),
@@ -118,6 +134,17 @@ CREATE TABLE IF NOT EXISTS simulated_conditions (
   UNIQUE KEY uniq_simulated_conditions_room (room_id),
   CONSTRAINT fk_simulated_conditions_room FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,
   CONSTRAINT fk_simulated_conditions_user FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS system_settings (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  setting_key VARCHAR(120) NOT NULL UNIQUE,
+  setting_value JSON NOT NULL,
+  description VARCHAR(255) NULL,
+  updated_by BIGINT UNSIGNED NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_system_settings_user FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS sensor_readings (
@@ -198,6 +225,7 @@ CREATE TABLE IF NOT EXISTS notifications (
   INDEX idx_notifications_type (type),
   INDEX idx_notifications_severity (severity),
   INDEX idx_notifications_read (is_read),
+  INDEX idx_notifications_created_at (created_at),
   CONSTRAINT fk_notifications_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   CONSTRAINT fk_notifications_room FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE SET NULL,
   CONSTRAINT fk_notifications_appliance FOREIGN KEY (appliance_id) REFERENCES appliances(id) ON DELETE SET NULL
@@ -214,6 +242,7 @@ CREATE TABLE IF NOT EXISTS energy_logs (
   runtime_minutes INT UNSIGNED NOT NULL DEFAULT 0,
   source ENUM('MANUAL', 'AUTO', 'SIMULATION', 'RULE_ENGINE') NOT NULL DEFAULT 'SIMULATION',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uniq_energy_logs_room_appliance_date (room_id, appliance_id, usage_date, source),
   INDEX idx_energy_logs_room (room_id),
   INDEX idx_energy_logs_appliance (appliance_id),
   INDEX idx_energy_logs_usage_date (usage_date),
@@ -318,8 +347,8 @@ CREATE TABLE IF NOT EXISTS password_resets (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_password_resets_user (user_id),
   INDEX idx_password_resets_token (token),
+  INDEX idx_password_resets_expires_at (expires_at),
   CONSTRAINT fk_password_resets_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 SET FOREIGN_KEY_CHECKS = 1;
-

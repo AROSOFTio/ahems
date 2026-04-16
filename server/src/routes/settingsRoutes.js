@@ -10,7 +10,6 @@ const router = Router();
 
 router.use(authenticate);
 router.get("/", asyncHandler(settingsController.show));
-router.put("/", authorize("admin", "resident"), validate(validateSettingsUpdate), asyncHandler(settingsController.update));
+router.put("/", authorize("admin"), validate(validateSettingsUpdate), asyncHandler(settingsController.update));
 
 export default router;
-

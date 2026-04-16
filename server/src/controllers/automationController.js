@@ -2,12 +2,12 @@ import * as automationService from "../services/automationService.js";
 import { sendSuccess } from "../utils/response.js";
 
 export async function list(req, res) {
-  const data = await automationService.getAutomationRules();
+  const data = await automationService.getAutomationRules(req.user);
   return sendSuccess(res, data, "Automation rules retrieved successfully.");
 }
 
 export async function show(req, res) {
-  const data = await automationService.getAutomationRuleById(req.params.id);
+  const data = await automationService.getAutomationRuleById(req.params.id, req.user);
   return sendSuccess(res, data, "Automation rule retrieved successfully.");
 }
 
@@ -26,8 +26,7 @@ export async function destroy(req, res) {
   return sendSuccess(res, data, "Automation rule deleted successfully.");
 }
 
-export async function history(_req, res) {
-  const data = await automationService.getAutomationHistory();
+export async function history(req, res) {
+  const data = await automationService.getAutomationHistory(req.user);
   return sendSuccess(res, data, "Automation history retrieved successfully.");
 }
-

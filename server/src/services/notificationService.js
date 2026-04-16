@@ -1,16 +1,18 @@
-import { addActivityLog, createId, ensureStore } from "../utils/mockData.js";
 import { ApiError } from "../utils/ApiError.js";
+import { createActivityLog } from "../models/activityLogModel.js";
+import {
+  createNotification as createNotificationRecord,
+  findNotificationById,
+  listNotificationsForUser,
+  markNotificationAsRead as markNotificationAsReadRecord,
+} from "../models/notificationModel.js";
 
 export async function getNotifications(user) {
-  const store = await ensureStore();
-  return user.role === "admin"
-    ? store.notifications
-    : store.notifications.filter((notification) => notification.userId === user.id);
+  return listNotificationsForUser(user);
 }
 
 export async function markNotificationAsRead(id, user) {
-  const store = await ensureStore();
-  const notification = store.notifications.find((item) => item.id === id);
+  const notification = await findNotificationById(id);
 
   if (!notification) {
     throw new ApiError(404, "Notification not found.");
@@ -20,26 +22,35 @@ export async function markNotificationAsRead(id, user) {
     throw new ApiError(403, "You do not have access to this notification.");
   }
 
-  notification.isRead = true;
-  addActivityLog(user.id, `Marked notification ${id} as read`, "Notifications");
-  return notification;
+  const updated = await markNotificationAsReadRecord(id);
+  await createActivityLog({
+    userId: user.id,
+    actorRole: user.role,
+    action: `Marked notification ${id} as read`,
+    moduleName: "Notifications",
+    entityType: "notification",
+    entityId: id,
+  });
+  return updated;
 }
 
 export async function createNotification(payload, user) {
-  const store = await ensureStore();
-  const notification = {
-    id: createId("not"),
+  const notification = await createNotificationRecord({
     userId: payload.userId || user.id,
+    roomId: payload.roomId || null,
+    applianceId: payload.applianceId || null,
     type: payload.type || "SYSTEM",
     title: payload.title,
     message: payload.message,
     severity: payload.severity || "INFO",
-    isRead: false,
-    createdAt: new Date().toISOString(),
-  };
-
-  store.notifications.unshift(notification);
-  addActivityLog(user.id, `Created notification ${payload.title}`, "Notifications");
+  });
+  await createActivityLog({
+    userId: user.id,
+    actorRole: user.role,
+    action: `Created notification ${payload.title}`,
+    moduleName: "Notifications",
+    entityType: "notification",
+    entityId: notification.id,
+  });
   return notification;
 }
-

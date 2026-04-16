@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
 import { findUserById } from "../models/userModel.js";
 import { ApiError } from "../utils/ApiError.js";
-import { sanitizeUser } from "../utils/mockData.js";
+import { sanitizeUser } from "../utils/sanitizeUser.js";
 
 export async function authenticate(req, _res, next) {
   const header = req.headers.authorization;
@@ -26,4 +26,3 @@ export async function authenticate(req, _res, next) {
     return next(new ApiError(401, "Invalid or expired authentication token."));
   }
 }
-

@@ -12,6 +12,11 @@ INSERT INTO users (id, first_name, last_name, email, password_hash, phone, statu
   (3, 'Grace', 'Namutebi', 'operator@ahems.io', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '+256700000003', 'ACTIVE', NOW())
 ON DUPLICATE KEY UPDATE last_login_at = VALUES(last_login_at);
 
+-- Runtime bootstrap refreshes these demo users with bcrypt hashes for:
+-- admin@ahems.io / Admin@12345
+-- resident@ahems.io / Resident@12345
+-- operator@ahems.io / Operator@12345
+
 INSERT INTO user_roles (user_id, role_id) VALUES
   (1, 1),
   (2, 2),
@@ -37,6 +42,13 @@ INSERT INTO rooms (id, owner_user_id, room_type_id, name, description, floor_lev
   (3, 3, 4, 'Home Office', 'Focused work and study room', 'Upper', 'OCCUPIED', 21.00, 68.00, 24.00, 60.00)
 ON DUPLICATE KEY UPDATE current_temperature = VALUES(current_temperature), current_light_level = VALUES(current_light_level);
 
+INSERT INTO user_room_assignments (user_id, room_id, assignment_type) VALUES
+  (2, 1, 'OWNER'),
+  (2, 2, 'OWNER'),
+  (3, 3, 'OWNER'),
+  (3, 3, 'OPERATOR')
+ON DUPLICATE KEY UPDATE assignment_type = VALUES(assignment_type);
+
 INSERT INTO appliances (id, room_id, category_id, created_by, name, power_rating_watts, status, mode, brightness_level, runtime_minutes_today, estimated_energy_kwh, estimated_cost, notes, last_state_changed_at) VALUES
   (1, 1, 1, 1, 'Ceiling Panel', 48.00, 'DIMMED', 'AUTO', 45, 348, 1.840, 8.60, 'Ambient lounge lighting', NOW()),
   (2, 1, 2, 1, 'Smart Fan', 72.00, 'STANDBY', 'AUTO', 0, 252, 0.960, 4.10, 'Climate safeguard fan', NOW()),
@@ -51,7 +63,9 @@ ON DUPLICATE KEY UPDATE target_temperature = VALUES(target_temperature), target_
 INSERT INTO sensor_readings (room_id, reading_type, reading_value, unit, source, recorded_at) VALUES
   (1, 'TEMPERATURE', 24.00, 'C', 'MANUAL', NOW()),
   (1, 'LIGHT', 82.00, '%', 'SCHEDULED', NOW()),
-  (3, 'OCCUPANCY', 1.00, 'BOOLEAN', 'RANDOMIZED', NOW());
+  (3, 'OCCUPANCY', 1.00, 'BOOLEAN', 'RANDOMIZED', NOW()),
+  (2, 'TEMPERATURE', 22.00, 'C', 'MANUAL', NOW()),
+  (2, 'LIGHT', 74.00, '%', 'SCHEDULED', NOW());
 
 INSERT INTO automation_rules (id, owner_user_id, room_id, appliance_id, name, description, scope, priority, logical_operator, is_enabled) VALUES
   (1, 2, 1, 1, 'Evening ambience', 'Dims living room lighting during the evening', 'ROOM', 2, 'ALL', 1),
@@ -72,11 +86,22 @@ INSERT INTO notifications (user_id, room_id, appliance_id, type, title, message,
 
 INSERT INTO energy_logs (room_id, appliance_id, usage_date, usage_kwh, cost_estimate, currency, runtime_minutes, source) VALUES
   (1, 1, CURRENT_DATE, 1.840, 8.60, 'USD', 348, 'AUTO'),
-  (3, 3, CURRENT_DATE, 2.140, 10.40, 'USD', 426, 'MANUAL');
+  (3, 3, CURRENT_DATE, 2.140, 10.40, 'USD', 426, 'MANUAL'),
+  (1, 2, DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY), 0.960, 4.10, 'USD', 252, 'AUTO'),
+  (3, 3, DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY), 1.920, 9.30, 'USD', 390, 'MANUAL');
 
 INSERT INTO tariff_settings (id, name, rate_per_kwh, peak_rate_per_kwh, off_peak_rate_per_kwh, currency, effective_from, effective_to, is_active, created_by) VALUES
   (1, 'Standard residential', 0.4200, 0.4800, 0.3400, 'USD', CURRENT_DATE, NULL, 1, 1)
 ON DUPLICATE KEY UPDATE rate_per_kwh = VALUES(rate_per_kwh), is_active = VALUES(is_active);
+
+INSERT INTO system_settings (setting_key, setting_value, description, updated_by) VALUES
+  ('default_thresholds', JSON_OBJECT('maxTemperature', 25, 'minLightLevel', 45), 'Default room thresholds for new spaces', 1),
+  ('notification_preferences', JSON_OBJECT('channels', JSON_ARRAY('in-app', 'email'), 'digestFrequency', 'daily'), 'Default notification routing preferences', 1),
+  ('report_defaults', JSON_OBJECT('exportFormat', 'CSV', 'dateRange', 'monthly'), 'Default reporting preferences', 1)
+ON DUPLICATE KEY UPDATE
+  setting_value = VALUES(setting_value),
+  description = VALUES(description),
+  updated_by = VALUES(updated_by);
 
 INSERT INTO reports (id, user_id, report_type, title, filters_json, status, file_path, generated_at) VALUES
   (1, 1, 'ENERGY_SUMMARY', 'Weekly energy summary', JSON_OBJECT('range', 'weekly'), 'READY', '/exports/weekly-energy-summary.csv', NOW())
@@ -96,4 +121,3 @@ INSERT INTO device_commands (user_id, room_id, appliance_id, command_source, com
 INSERT INTO password_resets (user_id, email, token, expires_at, used_at) VALUES
   (2, 'resident@ahems.io', 'seed-reset-token-resident', DATE_ADD(NOW(), INTERVAL 1 DAY), NULL)
 ON DUPLICATE KEY UPDATE expires_at = VALUES(expires_at);
-

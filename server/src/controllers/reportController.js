@@ -11,8 +11,7 @@ export async function generate(req, res) {
   return sendSuccess(res, data, "Report generated successfully.", 201);
 }
 
-export async function exportsList(_req, res) {
-  const data = await reportService.listReportExports();
+export async function exportsList(req, res) {
+  const data = await reportService.listReportExports(req.user);
   return sendSuccess(res, data, "Report exports retrieved successfully.");
 }
-

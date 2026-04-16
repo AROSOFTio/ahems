@@ -2,9 +2,20 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { randomUUID } from "node:crypto";
 import { env } from "../config/env.js";
-import { createUser, findUserByEmail, findUserById, getPasswordResetStore, updateUser } from "../models/userModel.js";
+import { createActivityLog } from "../models/activityLogModel.js";
+import {
+  clearActivePasswordResetsForUser,
+  createPasswordResetRecord,
+  createUser,
+  findPasswordResetByToken,
+  findUserByEmail,
+  findUserById,
+  markPasswordResetUsed,
+  touchLastLogin,
+  updateUser,
+} from "../models/userModel.js";
 import { ApiError } from "../utils/ApiError.js";
-import { addActivityLog, sanitizeUser } from "../utils/mockData.js";
+import { sanitizeUser } from "../utils/sanitizeUser.js";
 
 function signToken(user) {
   return jwt.sign({ sub: user.id, role: user.role }, env.jwtSecret, {
@@ -25,7 +36,15 @@ export async function login({ email, password }) {
     throw new ApiError(401, "Invalid email or password.");
   }
 
-  addActivityLog(user.id, "Signed into the platform", "Auth");
+  await touchLastLogin(user.id);
+  await createActivityLog({
+    userId: user.id,
+    actorRole: user.role,
+    action: "Signed into the platform",
+    moduleName: "Auth",
+    entityType: "user",
+    entityId: user.id,
+  });
 
   return {
     user: sanitizeUser(user),
@@ -48,6 +67,15 @@ export async function register({ name, email, password, role }) {
     passwordHash,
   });
 
+  await createActivityLog({
+    userId: user.id,
+    actorRole: user.role,
+    action: "Registered new account",
+    moduleName: "Auth",
+    entityType: "user",
+    entityId: user.id,
+  });
+
   return {
     user,
     token: signToken(user),
@@ -61,29 +89,32 @@ export async function forgotPassword(email) {
     throw new ApiError(404, "No account was found for this email address.");
   }
 
-  const resetStore = getPasswordResetStore();
   const token = `reset_${randomUUID().replace(/-/g, "")}`;
-  resetStore.push({
-    id: randomUUID(),
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+  await clearActivePasswordResetsForUser(user.id);
+  await createPasswordResetRecord({
     userId: user.id,
     email,
     token,
-    expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-    usedAt: null,
-    createdAt: new Date().toISOString(),
+    expiresAt,
+  });
+  await createActivityLog({
+    userId: user.id,
+    actorRole: user.role,
+    action: "Requested password reset token",
+    moduleName: "Auth",
+    entityType: "password_reset",
   });
 
-  addActivityLog(user.id, "Requested password reset token", "Auth");
-
   return {
-    message: "Reset token generated successfully for the simulation environment.",
+    message: "Reset token generated successfully for the account.",
     resetToken: token,
   };
 }
 
 export async function resetPassword({ token, password }) {
-  const resetStore = getPasswordResetStore();
-  const resetRecord = resetStore.find((item) => item.token === token);
+  const resetRecord = await findPasswordResetByToken(token);
 
   if (!resetRecord) {
     throw new ApiError(404, "Reset token was not found.");
@@ -99,9 +130,16 @@ export async function resetPassword({ token, password }) {
 
   const passwordHash = await bcrypt.hash(password, 10);
   await updateUser(resetRecord.userId, { passwordHash });
-  resetRecord.usedAt = new Date().toISOString();
+  await markPasswordResetUsed(resetRecord.id);
 
-  addActivityLog(resetRecord.userId, "Completed password reset", "Auth");
+  const user = await findUserById(resetRecord.userId);
+  await createActivityLog({
+    userId: resetRecord.userId,
+    actorRole: user?.role || null,
+    action: "Completed password reset",
+    moduleName: "Auth",
+    entityType: "password_reset",
+  });
 
   return {
     message: "Password reset completed successfully.",
@@ -123,7 +161,14 @@ export async function changePassword(userId, { currentPassword, newPassword }) {
 
   const passwordHash = await bcrypt.hash(newPassword, 10);
   await updateUser(user.id, { passwordHash });
-  addActivityLog(user.id, "Changed account password", "Auth");
+  await createActivityLog({
+    userId: user.id,
+    actorRole: user.role,
+    action: "Changed account password",
+    moduleName: "Auth",
+    entityType: "user",
+    entityId: user.id,
+  });
 
   return {
     message: "Password changed successfully.",
@@ -141,4 +186,3 @@ export async function getCurrentUser(userId) {
     user: sanitizeUser(user),
   };
 }
-

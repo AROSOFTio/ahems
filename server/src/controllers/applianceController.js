@@ -7,7 +7,7 @@ export async function list(req, res) {
 }
 
 export async function show(req, res) {
-  const data = await applianceService.getApplianceById(req.params.id);
+  const data = await applianceService.getApplianceById(req.params.id, req.user);
   return sendSuccess(res, data, "Appliance retrieved successfully.");
 }
 
@@ -25,4 +25,3 @@ export async function destroy(req, res) {
   const data = await applianceService.deleteApplianceRecord(req.params.id, req.user);
   return sendSuccess(res, data, "Appliance deleted successfully.");
 }
-

@@ -1,42 +1,35 @@
-import { addActivityLog, createId, ensureStore } from "../utils/mockData.js";
+import { createActivityLog } from "../models/activityLogModel.js";
+import {
+  createReportWithExport,
+  listReportExports as listReportExportRecords,
+  listReportsForUser,
+} from "../models/reportModel.js";
 
 export async function listReports(user) {
-  const store = await ensureStore();
-  return user.role === "admin"
-    ? store.reports
-    : store.reports.filter((report) => report.userId === user.id);
+  return listReportsForUser(user);
 }
 
 export async function generateReport(payload, user) {
-  const store = await ensureStore();
-  const report = {
-    id: createId("rep"),
+  const generated = await createReportWithExport({
     userId: user.id,
     reportType: payload.reportType,
     title: payload.title || `${payload.reportType} report`,
-    status: "READY",
-    generatedAt: new Date().toISOString(),
-  };
-
-  store.reports.unshift(report);
-  store.reportExports.unshift({
-    id: createId("exp"),
-    reportId: report.id,
+    filtersJson: payload.filters || null,
     format: payload.format || "CSV",
-    fileName: `${report.title.toLowerCase().replace(/\s+/g, "-")}.${(payload.format || "CSV").toLowerCase()}`,
-    exportedAt: new Date().toISOString(),
   });
 
-  addActivityLog(user.id, `Generated report ${report.title}`, "Reports");
+  await createActivityLog({
+    userId: user.id,
+    actorRole: user.role,
+    action: `Generated report ${generated.report.title}`,
+    moduleName: "Reports",
+    entityType: "report",
+    entityId: generated.report.id,
+  });
 
-  return {
-    report,
-    export: store.reportExports[0],
-  };
+  return generated;
 }
 
-export async function listReportExports() {
-  const store = await ensureStore();
-  return store.reportExports;
+export async function listReportExports(user) {
+  return listReportExportRecords(user);
 }
-
