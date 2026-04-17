@@ -5,9 +5,9 @@ export default {
     extend: {
       colors: {
         brand: {
-          primary: "#3543bb",
-          secondary: "#0f172a",
-          accent: "#06b6d4",
+          primary: "#6C3BFF",
+          secondary: "#4B28B5",
+          accent: "#A78BFA",
           success: "#10b981",
           warning: "#f59e0b",
           danger: "#ef4444",
@@ -28,7 +28,7 @@ export default {
       },
       backgroundImage: {
         "hero-mesh":
-          "radial-gradient(circle at top left, rgba(53, 67, 187, 0.18), transparent 32%), radial-gradient(circle at bottom right, rgba(6, 182, 212, 0.14), transparent 30%), linear-gradient(135deg, rgba(255,255,255,0.98), rgba(241,245,249,0.96))",
+          "radial-gradient(circle at top left, rgba(108, 59, 255, 0.18), transparent 32%), radial-gradient(circle at bottom right, rgba(167, 139, 250, 0.14), transparent 30%), linear-gradient(135deg, rgba(255,255,255,0.98), rgba(241,245,249,0.96))",
       },
       borderRadius: {
         "4xl": "2rem",

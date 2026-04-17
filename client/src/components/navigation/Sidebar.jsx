@@ -1,35 +1,23 @@
-import { X } from "lucide-react";
+import { X, Zap } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import logoMark from "../../assets/logo-mark.svg";
-import { adminNavigation, appNavigation } from "../../constants/navigation";
+import { navigation } from "../../constants/navigation";
 import { useAuth } from "../../hooks/useAuth";
 import { useUI } from "../../hooks/useUI";
 import { cn } from "../../utils/cn";
 
-function SidebarBody({ role, scope, onNavigate }) {
-  const navigation = (scope === "admin" ? adminNavigation : appNavigation).filter(
-    (item) => !item.roles || item.roles.includes(role),
-  );
+function SidebarBody({ onNavigate }) {
   const { user } = useAuth();
 
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-3 px-5 py-5">
-        <img src={logoMark} alt="AHEMS" className="h-11 w-11 rounded-2xl shadow-soft" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-primary text-white shadow-soft">
+          <Zap className="h-5 w-5" />
+        </div>
         <div>
           <p className="font-display text-lg font-bold text-slate-950">AHEMS</p>
-          <p className="text-xs uppercase tracking-[0.22em] text-brand-muted">Automation Suite</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-brand-muted">Energy Module</p>
         </div>
-      </div>
-
-      <div className="mx-4 rounded-[1.75rem] border border-slate-200/70 bg-slate-950 p-5 text-white shadow-ambient">
-        <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Active workspace</p>
-        <p className="mt-3 font-display text-xl font-bold">
-          {role === "admin" ? "Control Center" : role === "operator" ? "Operator Station" : "Resident Console"}
-        </p>
-        <p className="mt-2 text-sm text-slate-300">
-          Signed in as {user?.name || "Simulation user"} with {user?.role || role} permissions.
-        </p>
       </div>
 
       <nav className="mt-6 flex-1 space-y-2 overflow-y-auto px-4 pb-6">
@@ -51,19 +39,17 @@ function SidebarBody({ role, scope, onNavigate }) {
           );
         })}
       </nav>
-
-      {/* Reduced sidebar footer */}
     </div>
   );
 }
 
-export function Sidebar({ role, scope }) {
+export function Sidebar() {
   const { sidebarOpen, closeSidebar } = useUI();
 
   return (
     <>
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-white/70 bg-white/75 backdrop-blur xl:block">
-        <SidebarBody role={role} scope={scope} />
+        <SidebarBody />
       </aside>
 
       <div
@@ -90,7 +76,7 @@ export function Sidebar({ role, scope }) {
             <X className="h-5 w-5" />
           </button>
         </div>
-        <SidebarBody role={role} scope={scope} onNavigate={closeSidebar} />
+        <SidebarBody onNavigate={closeSidebar} />
       </aside>
     </>
   );
