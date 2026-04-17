@@ -113,7 +113,7 @@ export function AppliancesWorkspace({ mode = "app" }) {
         value: formatNumber(appliances.length),
         trend: `${formatNumber(filteredAppliances.length)} visible`,
         tone: "info",
-        helper: "The device inventory stays focused on the fields that matter during defense.",
+        helper: "The device inventory stays focused on the fields that matter in daily operation.",
       },
       {
         icon: Zap,
@@ -282,8 +282,8 @@ export function AppliancesWorkspace({ mode = "app" }) {
     <div className="page-shell">
       <PageHero
         eyebrow={mode === "admin" ? "Appliance administration" : "Appliance management"}
-        title="Track device state, mode, brightness, and cost without cluttering the story."
-        description="This module keeps the demo grounded in real device control: room assignment, mode switching, dimming, runtime tracking, and cost contribution."
+        title="Track device state, mode, brightness, and cost from one control view."
+        description="Manage room assignment, control mode, dimming, runtime tracking, energy usage, and cost contribution."
         primaryAction={
           <Button onClick={openCreateModal}>
             Create appliance
@@ -299,7 +299,7 @@ export function AppliancesWorkspace({ mode = "app" }) {
           {
             label: "Filtered results",
             value: formatNumber(filteredAppliances.length),
-            caption: "Search and filters keep the device layer concise and presentation-ready.",
+            caption: "Search and filters keep the device layer concise and easy to navigate.",
           },
           {
             label: "Rooms covered",
@@ -403,7 +403,7 @@ export function AppliancesWorkspace({ mode = "app" }) {
           <div className="mt-6 hidden xl:block">
             <DataTable
               title="Appliance inventory"
-              subtitle="The device layer is kept focused on the fields that matter during demonstration."
+              subtitle="The device layer is focused on operational state, usage, and control."
               columns={columns}
               rows={filteredAppliances}
             />
@@ -442,7 +442,7 @@ export function AppliancesWorkspace({ mode = "app" }) {
         open={showForm}
         onClose={closeForm}
         title={editingAppliance ? `Edit ${editingAppliance.name}` : "Create appliance"}
-        description="Capture the device identity, room assignment, state, and control posture needed for defense."
+        description="Capture the device identity, room assignment, state, and control posture."
         size="lg"
       >
         <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>

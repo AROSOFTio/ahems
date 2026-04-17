@@ -1,15 +1,27 @@
 # Automatic Home Energy Management System (AHEMS)
 
-AHEMS is a premium, fully web-based smart-home energy simulation platform built with React, Tailwind CSS, Express, MySQL, Docker, and Nginx. This Phase 1 delivery establishes the production-ready foundation, premium UI shell, route architecture, API structure, database schema, and containerized deployment workflow required for the rest of the product roadmap.
+AHEMS is a web-based energy management and automation platform for simulated rooms, appliances, sensors, rules, analytics, alerts, reports, and administration. The application is built for secure dashboard use, not as a marketing website. The root route redirects to the login page and all operational features are available after authentication.
 
 ## Stack
 
-- Frontend: React + Vite + Tailwind CSS + Lucide React + Recharts
-- Backend: Node.js + Express.js
-- Database: MySQL 8
-- Auth: JWT
-- State: Context API
-- Infra: Docker Compose + Nginx reverse proxy
+- Frontend: React, Vite, Tailwind CSS, Lucide React, Recharts
+- Backend: Node.js, Express.js
+- Database: MySQL
+- Authentication: JWT
+- State management: Context API
+- Deployment: Docker Compose, Nginx
+
+## Core Modules
+
+- Authentication and protected routing
+- Resident and admin dashboards
+- Room and appliance management
+- Sensor simulation and command execution
+- Automation rules engine with execution history
+- Energy monitoring and tariff-based cost estimation
+- Notifications and activity logs
+- Reports and exports
+- Settings and admin control center
 
 ## Project Structure
 
@@ -24,74 +36,175 @@ root/
   README.md
 ```
 
-## Key Phase 1 Deliverables
+## Initial Accounts
 
-- Premium responsive marketing pages
-- Role-aware app and admin shells
-- Sticky topbar, desktop sidebar, and mobile off-canvas navigation
-- Placeholder route pages for every required public, app, and admin URL
-- Express API foundation with controllers, services, middleware, validators, and JWT auth scaffolding
-- MySQL schema and seed scripts for the full AHEMS data model
-- Dockerfiles for frontend and backend
-- Docker Compose stack with `frontend`, `backend`, `db`, and `nginx`
-- Reverse proxy exposed on port `3002`
-
-## Demo Credentials
-
-These are handled by the Phase 1 simulation-ready API:
+The seeded database includes these initial accounts:
 
 - Admin: `admin@ahems.io` / `Admin@12345`
-- User: `resident@ahems.io` / `Resident@12345`
+- Resident: `resident@ahems.io` / `Resident@12345`
 - Operator: `operator@ahems.io` / `Operator@12345`
 
-## Local Environment
+## Environment Setup
 
-1. Copy the environment file:
+Create an environment file from the example:
 
-   ```bash
-   cp .env.example .env
-   ```
+```bash
+cp .env.example .env
+```
 
-2. Build and run with the optional local MySQL container:
+Important variables:
 
-   ```bash
-   docker compose --profile local-db up --build -d
-   ```
+- `APP_PORT=3002`
+- `SERVER_PORT=5000`
+- `MYSQL_HOST`
+- `MYSQL_PORT`
+- `MYSQL_DATABASE`
+- `MYSQL_USER`
+- `MYSQL_PASSWORD`
+- `JWT_SECRET`
+- `CLIENT_PUBLIC_URL`
+- `VITE_API_BASE_URL=/api`
 
-3. Open:
+When MySQL is managed outside Docker on the same VPS, keep `MYSQL_HOST=host.docker.internal` unless your server requires a different host value.
 
-   - App: `http://localhost:3002`
-   - API health: `http://localhost:3002/api/health`
+## Local Development
 
-## VPS Deployment With aaPanel-Managed MySQL
+Install dependencies:
 
-Run these commands from the deployment directory:
+```bash
+cd client
+npm install
+
+cd ../server
+npm install
+```
+
+Run the frontend:
+
+```bash
+cd client
+npm run dev
+```
+
+Run the backend:
+
+```bash
+cd server
+npm run dev
+```
+
+Default local endpoints:
+
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:5000`
+- Health: `http://localhost:5000/api/health`
+
+## Docker Usage
+
+Run the full stack:
+
+```bash
+docker compose up -d --build
+```
+
+Run with the optional local MySQL profile:
+
+```bash
+docker compose --profile local-db up -d --build
+```
+
+Stop the stack:
+
+```bash
+docker compose down
+```
+
+## Production Deployment
+
+Deployment assumes the project exists at:
+
+```bash
+cd /www/wwwroot/ahems.arosoft.io
+```
+
+Update and deploy:
 
 ```bash
 cd /www/wwwroot/ahems.arosoft.io
 git pull origin main
-cp .env.example .env
+docker compose down
 docker compose up -d --build
 docker compose ps
-curl -I http://127.0.0.1:3002
+docker compose logs --tail=100 backend frontend nginx
 curl http://127.0.0.1:3002/api/health
+curl -I http://127.0.0.1:3002
 ```
 
-If your aaPanel MySQL is running on the same VPS, keep `MYSQL_HOST=host.docker.internal`.
-If MySQL is on a separate server, set `MYSQL_HOST` to that host or IP instead.
-Import `database/schema/001_ahems_schema.sql` and `database/seed/001_seed_roles_and_demo.sql` into the aaPanel database before starting the stack.
-
-## Rebuild / Restart
+Quick rebuild and restart:
 
 ```bash
 cd /www/wwwroot/ahems.arosoft.io
-docker compose down
+git pull origin main
 docker compose up -d --build
-docker compose logs -f nginx backend
+docker compose restart backend frontend nginx
+docker compose ps
+curl http://127.0.0.1:3002/api/health
+curl -I http://127.0.0.1:3002
 ```
+
+## Application Routing
+
+Public access:
+
+- `/login`
+- `/register`
+- `/forgot-password`
+- `/reset-password`
+
+Authenticated user area:
+
+- `/app/dashboard`
+- `/app/rooms`
+- `/app/appliances`
+- `/app/sensors`
+- `/app/automation-rules`
+- `/app/energy-monitoring`
+- `/app/notifications`
+- `/app/reports`
+- `/app/profile`
+- `/app/settings`
+
+Admin area:
+
+- `/admin/dashboard`
+- `/admin/users`
+- `/admin/rooms`
+- `/admin/appliances`
+- `/admin/categories`
+- `/admin/sensors`
+- `/admin/automation-rules`
+- `/admin/notifications`
+- `/admin/reports`
+- `/admin/logs`
+- `/admin/settings`
+
+## Operational Checks
+
+Use this checklist after deployment:
+
+- Sign in with each seeded role
+- Confirm protected routes redirect correctly
+- Create and edit rooms
+- Create and edit appliances
+- Run sensor updates and command actions
+- Create, enable, disable, and trigger automation rules
+- Confirm notifications load and can be marked read
+- Review analytics and energy charts
+- Generate reports and verify download output
+- Review admin logs and settings
 
 ## Notes
 
-- `phpMyAdmin` is intentionally excluded from Docker because it is already managed separately in aaPanel.
-- The UI and API are structured for simulation-first workflows, with hardware integrations explicitly out of scope.
-- The database schema already includes the core entities required for role management, automation, sensing, monitoring, reporting, and auditability.
+- The application is exposed through Docker on port `3002`.
+- Nginx routes `/api` traffic to the backend service and serves the frontend for all dashboard routes.
+- The backend remains available even if the database is temporarily unavailable, but data-backed features require a valid MySQL connection.

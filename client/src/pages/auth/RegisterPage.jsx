@@ -17,7 +17,7 @@ export function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (event) => {
+  async function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
     setError("");
@@ -30,25 +30,25 @@ export function RegisterPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
-    <div className="grid min-h-[calc(100vh-9rem)] gap-6 lg:grid-cols-[0.85fr,1.15fr]">
-      <SurfaceCard className="hero-card p-8">
+    <div className="grid min-h-screen gap-6 lg:grid-cols-[0.88fr,1.12fr]">
+      <SurfaceCard className="hero-card p-8 sm:p-10">
         <span className="inline-flex rounded-full bg-brand-accent/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-brand-accent">
-          Create account
+          Account registration
         </span>
-        <h1 className="mt-5 font-display text-4xl font-extrabold tracking-tight text-slate-950">Provision a new AHEMS user workspace.</h1>
-        <p className="mt-4 text-base leading-8 text-brand-muted">
-          New Resident and Operator accounts can be created here, with role-aware navigation and secure session handling from the start.
+        <h1 className="mt-5 font-display text-4xl font-extrabold tracking-tight text-slate-950">Create a new workspace account.</h1>
+        <p className="mt-4 max-w-2xl text-base leading-8 text-brand-muted">
+          Register a resident or operator account with immediate access to the AHEMS application shell and protected modules.
         </p>
       </SurfaceCard>
 
-      <SurfaceCard className="p-8">
+      <SurfaceCard className="p-8 sm:p-10">
         <form className="space-y-5" onSubmit={handleSubmit}>
           <div>
-            <h2 className="font-display text-2xl font-bold text-slate-950">Get started</h2>
-            <p className="mt-2 text-sm text-brand-muted">Set up an account that can immediately access the Phase 1 platform shell.</p>
+            <h2 className="font-display text-2xl font-bold text-slate-950">Create account</h2>
+            <p className="mt-2 text-sm text-brand-muted">Fill in the user details and choose the appropriate role.</p>
           </div>
 
           {error ? (
@@ -67,6 +67,8 @@ export function RegisterPage() {
                 onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
                 className="w-full bg-transparent text-sm"
                 placeholder="Amina Kato"
+                autoComplete="name"
+                required
               />
             </div>
           </label>
@@ -79,7 +81,9 @@ export function RegisterPage() {
                 value={form.email}
                 onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
                 className="w-full bg-transparent text-sm"
-                placeholder="you@example.com"
+                placeholder="user@ahems.io"
+                autoComplete="email"
+                required
               />
             </div>
           </label>
@@ -92,6 +96,9 @@ export function RegisterPage() {
               onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
               className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm"
               placeholder="Create a strong password"
+              autoComplete="new-password"
+              minLength={8}
+              required
             />
           </label>
 
@@ -110,7 +117,7 @@ export function RegisterPage() {
             </div>
           </label>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full" disabled={loading || !form.name || !form.email || !form.password}>
             {loading ? "Creating account..." : "Create account"}
           </Button>
 
@@ -125,4 +132,3 @@ export function RegisterPage() {
     </div>
   );
 }
-

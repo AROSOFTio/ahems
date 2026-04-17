@@ -99,7 +99,7 @@ export function ReportsWorkspace({ mode = "app" }) {
         value: formatNumber(exportsList.filter((item) => item.exportFormat === "CSV").length),
         trend: "Spreadsheet-ready",
         tone: "success",
-        helper: "CSV output is useful when presenting tabular evidence and raw figures.",
+        helper: "CSV output is useful for tabular analysis and operational exports.",
       },
       {
         icon: TableProperties,
@@ -107,7 +107,7 @@ export function ReportsWorkspace({ mode = "app" }) {
         value: formatNumber(exportsList.filter((item) => item.exportFormat === "PDF").length),
         trend: "Presentation-ready",
         tone: "warning",
-        helper: "PDF output gives you a polished summary artifact for defense and review.",
+        helper: "PDF output is useful for shareable operational summaries.",
       },
     ],
     [exportsList, reports],
@@ -189,7 +189,7 @@ export function ReportsWorkspace({ mode = "app" }) {
           {
             label: "Last export",
             value: exportsList[0]?.fileName || "Not available",
-            caption: "The newest export appears here so you can confirm the workflow during the demo.",
+            caption: "The newest export appears here for quick verification.",
           },
           {
             label: "Preview rows",
@@ -221,7 +221,7 @@ export function ReportsWorkspace({ mode = "app" }) {
             </div>
             <div>
               <h2 className="font-display text-xl font-bold text-slate-950">Generate report</h2>
-              <p className="text-sm text-brand-muted">Use focused filters to produce a clean defense-ready export.</p>
+              <p className="text-sm text-brand-muted">Use focused filters to produce a clean export.</p>
             </div>
           </div>
 

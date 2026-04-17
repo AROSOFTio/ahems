@@ -88,7 +88,7 @@ export function RoomDetailWorkspace() {
           room.appliances?.filter((item) => ["ON", "DIMMED"].includes(item.status)).length || 0,
         )} active`,
         tone: "info",
-        helper: "Every room detail view surfaces the attached devices directly for demo clarity.",
+        helper: "Every room detail view surfaces attached devices and current room conditions.",
       },
       {
         icon: Thermometer,
@@ -104,7 +104,7 @@ export function RoomDetailWorkspace() {
         value: formatPercent(room.currentLightLevel || 0),
         trend: `Floor ${formatPercent(room.minLightThreshold || 0)}`,
         tone: "success",
-        helper: "Lighting thresholds stay presentation-ready and easy to explain.",
+        helper: "Lighting thresholds stay visible and easy to review.",
       },
       {
         icon: Zap,

@@ -1,18 +1,24 @@
-import { AlertCircle, LockKeyhole, UserCircle2 } from "lucide-react";
+import { AlertCircle, LockKeyhole, ShieldCheck, UserCircle2 } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 import { SurfaceCard } from "../../components/ui/SurfaceCard";
 import { useAuth } from "../../hooks/useAuth";
 
+const initialAccounts = [
+  { role: "Admin", email: "admin@ahems.io", password: "Admin@12345" },
+  { role: "Resident", email: "resident@ahems.io", password: "Resident@12345" },
+  { role: "Operator", email: "operator@ahems.io", password: "Operator@12345" },
+];
+
 export function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [form, setForm] = useState({ email: "admin@ahems.io", password: "Admin@12345" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (event) => {
+  async function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
     setError("");
@@ -25,36 +31,61 @@ export function LoginPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
-    <div className="grid min-h-[calc(100vh-9rem)] gap-6 lg:grid-cols-[0.85fr,1.15fr]">
-      <SurfaceCard className="hero-card p-8">
+    <div className="grid min-h-screen gap-6 lg:grid-cols-[0.9fr,1.1fr]">
+      <SurfaceCard className="hero-card p-8 sm:p-10">
         <span className="inline-flex rounded-full bg-brand-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-brand-primary">
-          Sign in
+          Platform access
         </span>
-        <h1 className="mt-5 font-display text-4xl font-extrabold tracking-tight text-slate-950">Enter the AHEMS simulation workspace.</h1>
-        <p className="mt-4 text-base leading-8 text-brand-muted">
-          Use one of the demo credentials below to switch between Admin, Resident, and Operator experiences during Phase 1.
+        <h1 className="mt-5 font-display text-4xl font-extrabold tracking-tight text-slate-950">Sign in to AHEMS.</h1>
+        <p className="mt-4 max-w-2xl text-base leading-8 text-brand-muted">
+          Access room operations, automation rules, analytics, alerts, reports, and system administration from one controlled workspace.
         </p>
-        <div className="mt-8 space-y-4">
-          {[
-            "Admin: admin@ahems.io / Admin@12345",
-            "Resident: resident@ahems.io / Resident@12345",
-            "Operator: operator@ahems.io / Operator@12345",
-          ].map((credential) => (
-            <div key={credential} className="rounded-[1.5rem] border border-slate-200/70 bg-white/75 p-4 text-sm text-slate-700">
-              {credential}
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/80 p-5">
+            <ShieldCheck className="h-5 w-5 text-brand-primary" />
+            <p className="mt-4 text-sm font-semibold text-slate-950">Role-aware access</p>
+            <p className="mt-2 text-sm leading-6 text-brand-muted">Admin, resident, and operator views stay separated by protected routing.</p>
+          </div>
+          <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/80 p-5">
+            <ShieldCheck className="h-5 w-5 text-brand-accent" />
+            <p className="mt-4 text-sm font-semibold text-slate-950">Operational modules</p>
+            <p className="mt-2 text-sm leading-6 text-brand-muted">Rooms, appliances, simulation, automation, reporting, and logs are available after sign-in.</p>
+          </div>
+          <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/80 p-5">
+            <ShieldCheck className="h-5 w-5 text-brand-success" />
+            <p className="mt-4 text-sm font-semibold text-slate-950">JWT sessions</p>
+            <p className="mt-2 text-sm leading-6 text-brand-muted">Authentication is backed by the API and restored automatically on reload.</p>
+          </div>
+        </div>
+
+        <div className="mt-8 rounded-[2rem] border border-slate-200/70 bg-white/80 p-6">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-slate-950">Initial accounts</p>
+              <p className="mt-1 text-sm text-brand-muted">Use these seeded accounts after first deployment.</p>
             </div>
-          ))}
+          </div>
+          <div className="mt-5 space-y-3">
+            {initialAccounts.map((account) => (
+              <div key={account.role} className="rounded-[1.5rem] border border-slate-200/70 bg-slate-50/80 p-4">
+                <p className="text-sm font-semibold text-slate-950">{account.role}</p>
+                <p className="mt-2 text-sm text-brand-muted">{account.email}</p>
+                <p className="mt-1 font-mono text-xs text-slate-700">{account.password}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </SurfaceCard>
 
-      <SurfaceCard className="p-8">
-        <form className="space-y-5" onSubmit={handleSubmit}>
+      <SurfaceCard className="p-8 sm:p-10">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
             <h2 className="font-display text-2xl font-bold text-slate-950">Welcome back</h2>
-            <p className="mt-2 text-sm text-brand-muted">Secure sign-in with role-aware routing and JWT-backed session setup.</p>
+            <p className="mt-2 text-sm text-brand-muted">Enter your account credentials to open the workspace.</p>
           </div>
 
           {error ? (
@@ -72,7 +103,9 @@ export function LoginPage() {
                 value={form.email}
                 onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
                 className="w-full bg-transparent text-sm"
-                placeholder="admin@ahems.io"
+                placeholder="name@company.com"
+                autoComplete="email"
+                required
               />
             </div>
           </label>
@@ -87,12 +120,14 @@ export function LoginPage() {
                 onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
                 className="w-full bg-transparent text-sm"
                 placeholder="Enter your password"
+                autoComplete="current-password"
+                required
               />
             </div>
           </label>
 
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Signing in..." : "Sign in to AHEMS"}
+          <Button type="submit" className="w-full" disabled={loading || !form.email || !form.password}>
+            {loading ? "Signing in..." : "Sign in"}
           </Button>
 
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-brand-muted">
@@ -100,9 +135,9 @@ export function LoginPage() {
               Forgot password?
             </Link>
             <span>
-              Need access?{" "}
+              Need an account?{" "}
               <Link to="/register" className="font-semibold text-brand-primary">
-                Create an account
+                Register
               </Link>
             </span>
           </div>
@@ -111,4 +146,3 @@ export function LoginPage() {
     </div>
   );
 }
-

@@ -214,8 +214,8 @@ export function SimulationWorkspace({ mode = "app" }) {
     <div className="page-shell">
       <PageHero
         eyebrow={mode === "admin" ? "Simulation lab" : "Simulation lab"}
-        title="Run virtual sensing and command scenarios in a polished, defense-ready workspace."
-        description="This lab combines room conditions, randomized sensing, quick commands, preset actions, typed commands, and recent history in one clean interface."
+        title="Run room simulation and command scenarios from one workspace."
+        description="Update room conditions, randomize sensor values, execute commands, and review recent readings and command history."
         stats={[
           {
             label: "Selected room",

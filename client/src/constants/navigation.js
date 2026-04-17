@@ -14,13 +14,6 @@ import {
   Zap,
 } from "lucide-react";
 
-export const publicNavigation = [
-  { label: "Home", path: "/" },
-  { label: "About", path: "/about" },
-  { label: "Features", path: "/features" },
-  { label: "Contact", path: "/contact" },
-];
-
 export const appNavigation = [
   { label: "Dashboard", path: "/app/dashboard", icon: LayoutDashboard, roles: ["resident", "operator"] },
   { label: "Rooms", path: "/app/rooms", icon: Home, roles: ["resident", "operator"] },
@@ -48,9 +41,9 @@ export const adminNavigation = [
 ];
 
 export const routeTitles = [
-  ...publicNavigation,
   ...appNavigation,
   ...adminNavigation,
+  { label: "Home", path: "/" },
   { label: "Sensors", path: "/admin/sensors" },
   { label: "Login", path: "/login" },
   { label: "Register", path: "/register" },

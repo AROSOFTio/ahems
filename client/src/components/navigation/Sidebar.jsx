@@ -54,12 +54,12 @@ function SidebarBody({ role, scope, onNavigate }) {
 
       <div className="mx-4 mb-4 rounded-[1.75rem] border border-brand-primary/10 bg-brand-primary/5 p-5">
         <p className="text-sm font-semibold text-slate-900">
-          {scope === "admin" ? "Defense-ready focus" : "Simulation engine"}
+          {scope === "admin" ? "System focus" : "Workspace focus"}
         </p>
         <p className="mt-2 text-sm text-brand-muted">
           {scope === "admin"
-            ? "The workspace is intentionally trimmed to the core story: access, rooms, appliances, automation, reports, and governance."
-            : "Temperature, lighting, occupancy, command flows, automation, and reporting are ready for interactive testing."}
+            ? "Access, rooms, appliances, automation, notifications, reports, logs, and settings are managed here."
+            : "Rooms, appliances, simulation, automation, analytics, and reporting are available from the same workspace."}
         </p>
       </div>
     </div>

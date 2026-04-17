@@ -50,7 +50,7 @@ export function EnergyAnalyticsWorkspace({ mode = "app" }) {
         value: `${formatNumber(analytics.summary?.totalUsageKwh || 0, 2)} kWh`,
         trend: analytics.summary?.topRoom?.name || "No room leader",
         tone: "success",
-        helper: "The usage tile keeps the defense conversation grounded in measurable totals.",
+        helper: "The usage tile keeps room and appliance consumption visible at a glance.",
       },
       {
         icon: Wallet,
@@ -74,7 +74,7 @@ export function EnergyAnalyticsWorkspace({ mode = "app" }) {
         value: formatNumber(analytics.dailyTrends?.length || 0),
         trend: `${formatNumber(analytics.monthlyTrends?.length || 0)} monthly`,
         tone: "info",
-        helper: "Daily, weekly, and monthly views stay responsive and presentation-ready.",
+        helper: "Daily, weekly, and monthly views stay responsive across device sizes.",
       },
     ];
   }, [analytics]);
@@ -104,18 +104,18 @@ export function EnergyAnalyticsWorkspace({ mode = "app" }) {
     <div className="page-shell">
       <PageHero
         eyebrow={mode === "admin" ? "Executive analytics" : "Energy monitoring"}
-        title="Track usage, cost, and projected bills in a premium analytics workspace."
-        description="This module turns the simulation data into room-level and appliance-level energy insight, with tariff-based cost estimation and trend views that are easy to defend."
+        title="Track usage, cost, and projected bills in one analytics workspace."
+        description="Review room-level and appliance-level energy insight with tariff-based cost estimation and trend views."
         stats={[
           {
             label: "Top room",
             value: analytics?.summary?.topRoom?.name || "Not available",
-            caption: "The room breakdown helps explain where the largest simulated load is concentrated.",
+            caption: "The room breakdown shows where the largest load is concentrated.",
           },
           {
             label: "Top appliance",
             value: analytics?.summary?.topAppliance?.name || "Not available",
-            caption: "Appliance leaders make the cost narrative concrete and easy to present.",
+            caption: "Appliance leaders show where the highest cost contribution is coming from.",
           },
         ]}
       />
@@ -130,7 +130,7 @@ export function EnergyAnalyticsWorkspace({ mode = "app" }) {
         <EnergyUsageChart
           data={(analytics?.dailyTrends || []).map((item) => ({ period: item.period, usage: Number(item.usageKwh || 0) }))}
           title="Daily usage trend"
-          description="A recent view of simulated energy usage over the last several days."
+          description="Recent energy usage over the last several days."
         />
         <CostTrendChart
           data={(analytics?.weeklyTrends || []).map((item) => ({ period: item.period, cost: Number(item.costEstimate || 0) }))}
@@ -148,7 +148,7 @@ export function EnergyAnalyticsWorkspace({ mode = "app" }) {
         <OccupancyChart
           data={monthlyComparison}
           title="Monthly comparison"
-          description="A paired bar view comparing monthly usage and cost across the simulated history."
+          description="A paired bar view comparing monthly usage and cost across recorded history."
           leftKey="usage"
           rightKey="cost"
           leftLabel="Usage"
@@ -161,7 +161,7 @@ export function EnergyAnalyticsWorkspace({ mode = "app" }) {
             </div>
             <div>
               <h2 className="font-display text-xl font-bold text-slate-950">Insights and highlights</h2>
-              <p className="text-sm text-brand-muted">Short, presentation-friendly talking points generated from live analytics.</p>
+              <p className="text-sm text-brand-muted">Operational highlights generated from live analytics.</p>
             </div>
           </div>
           <div className="mt-6 space-y-4">

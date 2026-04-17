@@ -86,7 +86,7 @@ export function ApplianceDetailWorkspace() {
         value: appliance.status,
         trend: appliance.mode,
         tone: getStatusTone(appliance.status),
-        helper: "Device state and control mode stay visible for command simulation demos.",
+        helper: "Device state and control mode stay visible for operations and command handling.",
       },
       {
         icon: Gauge,
@@ -153,7 +153,7 @@ export function ApplianceDetailWorkspace() {
       <PageHero
         eyebrow="Appliance detail"
         title={appliance.name}
-        description={appliance.notes || "This appliance is part of the core control story and can be updated, simulated, and commanded from the platform."}
+        description={appliance.notes || "This appliance can be updated, simulated, and commanded from the platform."}
         primaryAction={
           <Button onClick={() => setEditing(true)}>
             Edit appliance

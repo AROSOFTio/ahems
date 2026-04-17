@@ -57,7 +57,7 @@ export function UsersAdminWorkspace() {
         value: formatNumber(users.length),
         trend: `${formatNumber(residents)} residents`,
         tone: "info",
-        helper: "User administration is narrowed to counts and identity state for defense.",
+        helper: "User administration stays focused on identity, role, and account state.",
       },
       {
         icon: ShieldCheck,
@@ -65,7 +65,7 @@ export function UsersAdminWorkspace() {
         value: formatNumber(admins),
         trend: `${formatNumber(operators)} operators`,
         tone: "success",
-        helper: "Role segmentation is one of the clearest project-defense talking points.",
+        helper: "Role segmentation drives route access and module visibility.",
       },
       {
         icon: UserCog,
@@ -105,18 +105,18 @@ export function UsersAdminWorkspace() {
     <div className="page-shell">
       <PageHero
         eyebrow="Identity administration"
-        title="Keep user management readable, focused, and defense-ready."
-        description="This page avoids noisy admin clutter and centers the identity basics: who exists, what role they hold, and whether they are active."
+        title="Manage platform users and roles from one clear admin view."
+        description="Review identity records, role distribution, account status, and recent sign-in activity."
         stats={[
           {
             label: "Roles in play",
             value: formatNumber(new Set(users.map((user) => user.role)).size),
-            caption: "Admin, resident, and operator roles are enough for a clear access-control story.",
+            caption: "Admin, resident, and operator roles control access to application modules.",
           },
           {
             label: "Active accounts",
             value: formatNumber(users.filter((user) => user.status === "ACTIVE").length),
-            caption: "Only active accounts are used to present the simulation workflow.",
+            caption: "Only active accounts can access protected application routes.",
           },
         ]}
       />
@@ -130,7 +130,7 @@ export function UsersAdminWorkspace() {
       <div className="col-span-12">
         <DataTable
           title="Platform users"
-          subtitle="A compact administrative list of the identities participating in the project defense."
+          subtitle="Administrative user list with role, status, and last-login state."
           columns={columns}
           rows={users}
         />

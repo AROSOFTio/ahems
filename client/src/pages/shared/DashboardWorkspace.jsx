@@ -34,7 +34,7 @@ function QuickLinks({ mode }) {
     <SurfaceCard className="p-6">
       <SectionHeader
         title="Quick actions"
-        description="Jump straight into the core defense-ready workflows."
+        description="Open the main operational modules."
       />
       <div className="mt-6 grid gap-3">
         {actions.map((action) => (
@@ -161,7 +161,7 @@ export function DashboardWorkspace({ mode = "app" }) {
         tone: "info",
         helper:
           mode === "admin"
-            ? "The command center keeps just the core governance metrics needed for presentation."
+            ? "The command center keeps the main governance metrics in one view."
             : "Comfort conditions are updated from live room values and simulation adjustments.",
       },
     ];
@@ -188,7 +188,7 @@ export function DashboardWorkspace({ mode = "app" }) {
   );
 
   if (state.loading) {
-    return <LoadingState label="Preparing premium dashboard insights..." />;
+    return <LoadingState label="Loading dashboard..." />;
   }
 
   if (state.error) {
@@ -203,16 +203,24 @@ export function DashboardWorkspace({ mode = "app" }) {
         eyebrow={mode === "admin" ? "Admin control center" : "Simulation overview"}
         title={
           mode === "admin"
-            ? "Keep the project-defense story tight with system-wide insight, not clutter."
-            : "A premium resident workspace for rooms, appliances, and live simulation control."
+            ? "System operations dashboard"
+            : "Workspace operations dashboard"
         }
         description={
           mode === "admin"
-            ? "This view is intentionally narrowed to the operational essentials: users, spaces, devices, notifications, and energy posture."
-            : "The dashboard highlights room health, device state, consumption posture, and recent alerts in a clean commercial-grade layout."
+            ? "Track users, rooms, appliances, alerts, automation activity, and energy performance from one admin view."
+            : "Track room health, appliance state, automation activity, alerts, and current energy performance."
         }
-        primaryAction={mode === "admin" ? "Review users" : "Manage rooms"}
-        secondaryAction={mode === "admin" ? "Open lookups" : "Open simulation lab"}
+        primaryAction={
+          <Link to={mode === "admin" ? "/admin/users" : "/app/rooms"}>
+            <Button>{mode === "admin" ? "Review users" : "Manage rooms"}</Button>
+          </Link>
+        }
+        secondaryAction={
+          <Link to={mode === "admin" ? "/admin/categories" : "/app/sensors"}>
+            <Button variant="ghost">{mode === "admin" ? "Open lookups" : "Open simulation lab"}</Button>
+          </Link>
+        }
         stats={[
           {
             label: "Unread notifications",
@@ -222,7 +230,7 @@ export function DashboardWorkspace({ mode = "app" }) {
           {
             label: "Automation signal",
             value: `${formatNumber(dashboard.recentAutomationActions?.length || 0)} recent`,
-            caption: "Recent rule and command activity kept visible without overwhelming the dashboard.",
+            caption: "Recent rule and command activity across the current workspace.",
           },
         ]}
       />
@@ -237,7 +245,7 @@ export function DashboardWorkspace({ mode = "app" }) {
         <EnergyUsageChart
           data={energyChartData}
           title="Usage by room"
-          description="A trimmed trend view showing which rooms currently drive energy usage."
+          description="Current room-level usage totals."
         />
         <QuickLinks mode={mode} />
       </div>
@@ -246,12 +254,12 @@ export function DashboardWorkspace({ mode = "app" }) {
         <CostTrendChart
           data={energyChartData}
           title="Cost by room"
-          description="Projected spend aligned with the simulated usage profile of each room."
+          description="Estimated room-level cost totals."
         />
         <OccupancyChart
           data={occupancyChartData}
           title="Occupancy posture"
-          description="The distribution of occupied and vacant room states across the visible scope."
+          description="Occupied and vacant room state distribution."
         />
       </div>
 
@@ -259,7 +267,7 @@ export function DashboardWorkspace({ mode = "app" }) {
         <SurfaceCard className="p-6">
           <SectionHeader
             title="Recent alerts"
-            description="High-signal issues and milestones that matter for the live demonstration."
+            description="Latest unresolved alerts and rule events."
             action={
               <Link to={mode === "admin" ? "/admin/notifications" : "/app/notifications"}>
                 <Button variant="ghost">Open notifications</Button>
@@ -295,7 +303,7 @@ export function DashboardWorkspace({ mode = "app" }) {
         <SurfaceCard className="p-6">
           <SectionHeader
             title="Automation activity"
-            description="A short, presentation-friendly stream of recent control actions."
+            description="Latest rule and command activity."
           />
           <div className="mt-6 space-y-4">
             {(dashboard.recentAutomationActions || []).slice(0, 5).map((item) => (

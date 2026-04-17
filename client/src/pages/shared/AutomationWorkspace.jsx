@@ -104,7 +104,7 @@ export function AutomationWorkspace({ mode = "app" }) {
         value: formatNumber(rules.filter((rule) => rule.isEnabled).length),
         trend: `${formatNumber(rules.length)} total`,
         tone: "success",
-        helper: "Only the rules that matter for the demonstration stay visible in this manager.",
+        helper: "Only active and relevant rules stay visible in this manager.",
       },
       {
         icon: ShieldAlert,
@@ -112,7 +112,7 @@ export function AutomationWorkspace({ mode = "app" }) {
         value: formatNumber(history.filter((item) => item.status === "TRIGGERED").length),
         trend: `${formatNumber(history.length)} logged`,
         tone: "warning",
-        helper: "Each execution writes a rule-run record so you can explain trigger history clearly.",
+        helper: "Each execution writes a rule-run record for traceability and review.",
       },
       {
         icon: SlidersHorizontal,
@@ -268,7 +268,7 @@ export function AutomationWorkspace({ mode = "app" }) {
       <PageHero
         eyebrow={mode === "admin" ? "Automation control" : "Automation rules"}
         title="Build and explain rule-based control flows with a clean, production-style manager."
-        description="Create room or appliance-scoped rules, define conditions and actions, set priority, and review recent trigger history without clutter."
+        description="Create room or appliance-scoped rules, define conditions and actions, set priority, and review recent trigger history."
         primaryAction={
           user?.role === "operator" ? (
             <Button variant="ghost">Read-only access</Button>
@@ -320,7 +320,7 @@ export function AutomationWorkspace({ mode = "app" }) {
             </div>
           </div>
           <div className="mt-6 hidden xl:block">
-            <DataTable title="Automation rules" subtitle="This grid keeps the rule engine legible for live review and defense." columns={columns} rows={filteredRules} />
+            <DataTable title="Automation rules" subtitle="Rule list with scope, priority, state, and management actions." columns={columns} rows={filteredRules} />
           </div>
           <div className="mt-6 grid gap-4 xl:hidden">
             {filteredRules.map((rule) => (
@@ -375,7 +375,7 @@ export function AutomationWorkspace({ mode = "app" }) {
         </SurfaceCard>
       </div>
 
-      <ModalPanel open={showForm} onClose={() => setShowForm(false)} title={editingRule ? `Edit ${editingRule.name}` : "Create automation rule"} description="Capture the condition-to-action logic cleanly so it is easy to explain in the project defense." size="xl">
+      <ModalPanel open={showForm} onClose={() => setShowForm(false)} title={editingRule ? `Edit ${editingRule.name}` : "Create automation rule"} description="Define the rule scope, conditions, and actions." size="xl">
         <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
           <FormField label="Rule name"><TextInput value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} required /></FormField>
           <FormField label="Priority"><TextInput type="number" min="1" value={form.priority} onChange={(event) => setForm((current) => ({ ...current, priority: event.target.value }))} required /></FormField>

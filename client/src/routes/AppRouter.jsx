@@ -2,7 +2,6 @@ import { Navigate, Outlet, RouterProvider, createBrowserRouter } from "react-rou
 import { useAuth } from "../hooks/useAuth";
 import { AdminLayout } from "../layouts/AdminLayout";
 import { AppLayout } from "../layouts/AppLayout";
-import { MarketingLayout } from "../layouts/MarketingLayout";
 import { ForgotPasswordPage } from "../pages/auth/ForgotPasswordPage";
 import { LoginPage } from "../pages/auth/LoginPage";
 import { RegisterPage } from "../pages/auth/RegisterPage";
@@ -30,10 +29,6 @@ import { RoomsPage } from "../pages/app/RoomsPage";
 import { SensorsPage } from "../pages/app/SensorsPage";
 import { SettingsPage } from "../pages/app/SettingsPage";
 import { UserDashboardPage } from "../pages/app/UserDashboardPage";
-import { AboutPage } from "../pages/public/AboutPage";
-import { ContactPage } from "../pages/public/ContactPage";
-import { FeaturesPage } from "../pages/public/FeaturesPage";
-import { HomePage } from "../pages/public/HomePage";
 
 function ProtectedRoute({ roles }) {
   const { isAuthenticated, loading, hasRole } = useAuth();
@@ -67,15 +62,36 @@ function PublicOnlyRoute() {
   return <Outlet />;
 }
 
+function RootRedirect() {
+  const { isAuthenticated, hasRole, loading } = useAuth();
+
+  if (loading) {
+    return <div className="flex min-h-screen items-center justify-center text-sm text-brand-muted">Loading workspace...</div>;
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to={hasRole("admin") ? "/admin/dashboard" : "/app/dashboard"} replace />;
+  }
+
+  return <Navigate to="/login" replace />;
+}
+
 const router = createBrowserRouter([
   {
-    element: <MarketingLayout />,
-    children: [
-      { path: "/", element: <HomePage /> },
-      { path: "/about", element: <AboutPage /> },
-      { path: "/features", element: <FeaturesPage /> },
-      { path: "/contact", element: <ContactPage /> },
-    ],
+    path: "/",
+    element: <RootRedirect />,
+  },
+  {
+    path: "/about",
+    element: <RootRedirect />,
+  },
+  {
+    path: "/features",
+    element: <RootRedirect />,
+  },
+  {
+    path: "/contact",
+    element: <RootRedirect />,
   },
   {
     element: <PublicOnlyRoute />,

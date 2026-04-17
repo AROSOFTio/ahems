@@ -9,14 +9,17 @@ export function ResetPasswordPage() {
   const [form, setForm] = useState({ token: "", password: "", confirmPassword: "" });
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (event) => {
+  async function handleSubmit(event) {
     event.preventDefault();
+    setLoading(true);
     setError("");
     setMessage("");
 
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match.");
+      setLoading(false);
       return;
     }
 
@@ -29,22 +32,24 @@ export function ResetPasswordPage() {
       setForm({ token: "", password: "", confirmPassword: "" });
     } catch (submissionError) {
       setError(submissionError.message);
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
   return (
-    <div className="mx-auto grid min-h-[calc(100vh-9rem)] max-w-3xl gap-6">
-      <SurfaceCard className="hero-card p-8">
+    <div className="mx-auto grid min-h-screen max-w-4xl gap-6">
+      <SurfaceCard className="hero-card p-8 sm:p-10">
         <span className="inline-flex rounded-full bg-brand-success/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-brand-success">
           Reset password
         </span>
-        <h1 className="mt-5 font-display text-4xl font-extrabold tracking-tight text-slate-950">Complete the reset flow with the generated simulation token.</h1>
-        <p className="mt-4 text-base leading-8 text-brand-muted">
-          This screen demonstrates the full recovery path using the token returned from the API in the forgot-password flow.
+        <h1 className="mt-5 font-display text-4xl font-extrabold tracking-tight text-slate-950">Set a new account password.</h1>
+        <p className="mt-4 max-w-2xl text-base leading-8 text-brand-muted">
+          Submit a valid recovery token with the new password to restore access to the platform.
         </p>
       </SurfaceCard>
 
-      <SurfaceCard className="p-8">
+      <SurfaceCard className="p-8 sm:p-10">
         <form className="space-y-5" onSubmit={handleSubmit}>
           {error ? (
             <div className="flex items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
@@ -58,9 +63,9 @@ export function ResetPasswordPage() {
           ) : null}
 
           {[
-            { key: "token", label: "Reset token", type: "text" },
-            { key: "password", label: "New password", type: "password" },
-            { key: "confirmPassword", label: "Confirm password", type: "password" },
+            { key: "token", label: "Reset token", type: "text", autoComplete: "off" },
+            { key: "password", label: "New password", type: "password", autoComplete: "new-password" },
+            { key: "confirmPassword", label: "Confirm password", type: "password", autoComplete: "new-password" },
           ].map((field) => (
             <label key={field.key} className="space-y-2">
               <span className="text-sm font-semibold text-slate-800">{field.label}</span>
@@ -72,12 +77,16 @@ export function ResetPasswordPage() {
                   onChange={(event) => setForm((current) => ({ ...current, [field.key]: event.target.value }))}
                   className="w-full bg-transparent text-sm"
                   placeholder={field.label}
+                  autoComplete={field.autoComplete}
+                  required
                 />
               </div>
             </label>
           ))}
 
-          <Button type="submit">Reset password</Button>
+          <Button type="submit" disabled={loading || !form.token || !form.password || !form.confirmPassword}>
+            {loading ? "Resetting..." : "Reset password"}
+          </Button>
 
           <p className="text-sm text-brand-muted">
             Back to{" "}
@@ -90,4 +99,3 @@ export function ResetPasswordPage() {
     </div>
   );
 }
-

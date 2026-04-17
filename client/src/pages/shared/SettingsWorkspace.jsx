@@ -116,7 +116,7 @@ export function SettingsWorkspace({ mode = "app" }) {
             ? "Control tariff and platform defaults from one focused settings page."
             : "Review the tariff and policy defaults that shape your workspace."
         }
-        description="The settings module is intentionally compact so it supports the defense story without pulling attention away from the live simulation and analytics."
+        description="Manage tariff values and platform defaults for notifications, thresholds, and reporting."
         stats={[
           {
             label: "Tariffs",
@@ -126,7 +126,7 @@ export function SettingsWorkspace({ mode = "app" }) {
           {
             label: "Active from",
             value: settings?.activeTariff?.effectiveFrom ? formatDate(settings.activeTariff.effectiveFrom) : "Not set",
-            caption: "The active tariff date anchors the cost-estimation story.",
+            caption: "The active tariff date anchors the cost-estimation period.",
           },
         ]}
       />

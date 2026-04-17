@@ -64,7 +64,7 @@ export function CatalogAdminWorkspace() {
         value: formatNumber(catalog.applianceCategories.length),
         trend: "Reusable",
         tone: "success",
-        helper: "Categories help explain device groups and keep forms easy to demo.",
+        helper: "Categories keep device grouping and forms consistent.",
       },
     ],
     [catalog.applianceCategories.length, catalog.roomTypes.length],
@@ -166,7 +166,7 @@ export function CatalogAdminWorkspace() {
           {
             label: "Categories",
             value: formatNumber(catalog.applianceCategories.length),
-            caption: "Device categories help explain appliance groups during defense.",
+            caption: "Device categories organize appliance groups across forms, tables, and analytics.",
           },
         ]}
       />

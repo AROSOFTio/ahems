@@ -89,7 +89,7 @@ export function ProfileWorkspace() {
           {
             label: "Email",
             value: user.email,
-            caption: "Your sign-in identity remains fixed and visible for presentation clarity.",
+            caption: "Your sign-in identity remains fixed and visible throughout the workspace.",
           },
         ]}
       />

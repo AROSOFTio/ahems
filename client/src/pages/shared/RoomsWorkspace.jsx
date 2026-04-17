@@ -117,7 +117,7 @@ export function RoomsWorkspace({ mode = "app" }) {
         value: formatNumber(rooms.length),
         trend: `${formatNumber(occupied)} occupied`,
         tone: "success",
-        helper: "The room inventory is intentionally compact and presentation-ready.",
+        helper: "The room inventory stays compact and easy to manage.",
       },
       {
         icon: Layers3,
@@ -125,7 +125,7 @@ export function RoomsWorkspace({ mode = "app" }) {
         value: formatNumber(appliances),
         trend: `${formatNumber(filteredRooms.length)} visible`,
         tone: "info",
-        helper: "Each room carries linked appliance counts for a tighter management story.",
+        helper: "Each room includes linked appliance counts and energy rollups.",
       },
       {
         icon: ThermometerSun,
@@ -316,12 +316,12 @@ export function RoomsWorkspace({ mode = "app" }) {
         eyebrow={mode === "admin" ? "Room administration" : "Room management"}
         title={
           mode === "admin"
-            ? "Manage the spaces that drive the simulation story."
+            ? "Manage the spaces across the platform."
             : "Control room posture, thresholds, and linked appliance coverage."
         }
         description={
           mode === "admin"
-            ? "Administrators can create rooms for demo users, assign room types, and keep the project-defense scope clean."
+            ? "Administrators can create rooms, assign owners, manage room types, and control thresholds across the platform."
             : "Residents can define spaces, tune thresholds, and keep each room ready for the simulation and command flows."
         }
         primaryAction={
@@ -433,7 +433,7 @@ export function RoomsWorkspace({ mode = "app" }) {
             {filteredRooms.length === 0 ? (
               <EmptyState
                 title="No rooms match the current filters"
-                description="Try clearing the search or create a new room to start the simulation story."
+                description="Try clearing the search or create a new room to populate this view."
               />
             ) : null}
           </div>
@@ -494,7 +494,7 @@ export function RoomsWorkspace({ mode = "app" }) {
         open={showForm}
         onClose={closeForm}
         title={editingRoom ? `Edit ${editingRoom.name}` : "Create room"}
-        description="Capture only the details you need for a strong defense demo: the room identity, thresholds, and current simulated posture."
+        description="Set the room identity, ownership, thresholds, and current simulated condition values."
         size="lg"
       >
         <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>

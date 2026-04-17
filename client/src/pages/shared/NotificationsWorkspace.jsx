@@ -66,7 +66,7 @@ export function NotificationsWorkspace({ mode = "app" }) {
         value: formatNumber(notifications.filter((item) => item.isRead).length),
         trend: "Acknowledged",
         tone: "success",
-        helper: "Use this page to mark alerts as addressed during the demonstration.",
+        helper: "Use this page to mark alerts as addressed and keep the queue current.",
       },
     ],
     [notifications],
@@ -94,8 +94,8 @@ export function NotificationsWorkspace({ mode = "app" }) {
     <div className="page-shell">
       <PageHero
         eyebrow={mode === "admin" ? "Admin notifications" : "Notifications"}
-        title="Keep alerts visible, but tightly curated for the demo flow."
-        description="This workspace focuses on the alerts that support the story: rule triggers, threshold breaches, idle-room events, and simulation milestones."
+        title="Keep alerts visible and easy to clear."
+        description="Review rule triggers, threshold breaches, idle-room events, and other system notifications."
         stats={[
           {
             label: "Unread alerts",
@@ -105,7 +105,7 @@ export function NotificationsWorkspace({ mode = "app" }) {
           {
             label: "Danger severity",
             value: formatNumber(notifications.filter((item) => item.severity === "DANGER").length),
-            caption: "High-severity signals are useful when explaining the alert model in defense.",
+            caption: "High-severity signals are easy to isolate and review.",
           },
         ]}
       />

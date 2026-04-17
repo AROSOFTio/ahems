@@ -61,7 +61,7 @@ export function LogsWorkspace() {
         value: formatNumber(logs.filter((log) => log.actorRole === "admin").length),
         trend: "Governance",
         tone: "warning",
-        helper: "Admin actions are separated clearly for governance and defense review.",
+        helper: "Admin actions are separated clearly for governance review.",
       },
       {
         icon: Filter,
@@ -115,8 +115,8 @@ export function LogsWorkspace() {
     <div className="page-shell">
       <PageHero
         eyebrow="Admin logs"
-        title="Scan the activity trail with premium filters, readable cards, and a clean audit grid."
-        description="This viewer tracks login events, profile changes, rule changes, simulation updates, appliance actions, reports, and admin actions without feeling overloaded."
+        title="Scan the activity trail with clean filters and an audit grid."
+        description="Review login events, profile changes, rule changes, simulation updates, appliance actions, report activity, and admin actions."
         stats={[
           {
             label: "Latest module",
