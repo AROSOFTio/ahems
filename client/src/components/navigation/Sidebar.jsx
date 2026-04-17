@@ -11,7 +11,7 @@ function SidebarBody({ onNavigate }) {
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-center px-5 py-6">
-        <img src="/logo.png" alt="AHEMS Logo" className="w-48 h-auto object-contain drop-shadow-sm" />
+        <img src="/logo.png" alt="AHEMS Logo" className="w-48 h-auto object-contain drop-shadow-sm rounded-2xl" />
       </div>
 
       <nav className="mt-6 flex-1 space-y-2 overflow-y-auto px-4 pb-6">

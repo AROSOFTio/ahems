@@ -12,10 +12,10 @@ INSERT INTO room_types (id, name, description) VALUES
   (4, 'Office',      'Study or work zone')
 ON DUPLICATE KEY UPDATE description = VALUES(description);
 
--- Demo user (single resident — no admin/operator roles needed)
+-- Demo user (single resident — naigaga.nahiya@studmc.kiu.ac.ug / Nahiya@2013)
 INSERT INTO users (id, first_name, last_name, email, password_hash, status, last_login_at) VALUES
-  (1, 'Jonah', 'Okello', 'demo@ahems.io',
-   '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+  (1, 'Naigaga', 'Nahiya', 'naigaga.nahiya@studmc.kiu.ac.ug',
+   '$2a$12$Dv0LdACuXOEMcfZdSbptguSTAEM.I7g0PUE80lEkm6/Ij9Suug1Ue',
    'ACTIVE', NOW())
 ON DUPLICATE KEY UPDATE last_login_at = VALUES(last_login_at);
 

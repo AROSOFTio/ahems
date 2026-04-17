@@ -31,7 +31,7 @@ export function LoginPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-brand-primary via-brand-secondary to-slate-950 p-4">
       <div className="mb-8 text-center">
         <div className="mx-auto flex h-24 w-auto items-center justify-center mb-6">
-          <img src="/logo.png" alt="AHEMS Logo" className="h-full max-w-[200px] object-contain drop-shadow-xl" />
+          <img src="/logo.png" alt="AHEMS Logo" className="h-full max-w-[200px] object-contain drop-shadow-xl rounded-2xl" />
         </div>
         <h1 className="font-display text-4xl font-extrabold tracking-tight text-white hidden">AHEMS</h1>
         <p className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-brand-accent">Energy Module</p>
