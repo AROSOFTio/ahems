@@ -1,117 +1,146 @@
-import { Flame, Home, Lightbulb, ThermometerSun, Users, Zap } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Activity, Flame, Lightbulb, ThermometerSun, Users, Zap } from "lucide-react";
+import { useSimulation } from "../../context/SimulationContext";
+import { TARIFF } from "../../simulation/constants";
+import { cn } from "../../utils/cn";
 
-import { LoadingState } from "../../components/ui/LoadingState";
-import { StatCard } from "../../components/ui/StatCard";
-import { SurfaceCard } from "../../components/ui/SurfaceCard";
-import { useAuth } from "../../hooks/useAuth";
-import { analyticsService } from "../../services/analyticsService";
-import { formatCurrency, formatNumber, formatPercent, formatTemperature } from "../../utils/format";
+const METRIC_CARDS = [
+  {
+    key: "temperature",
+    label: "Temperature",
+    icon: ThermometerSun,
+    color: "text-orange-600",
+    bg: "bg-orange-50",
+    format: (s) => `${s.sensors.temperature.toFixed(1)} °C`,
+    sub: (s) => s.sensors.temperature > 30 ? "⚠ Above threshold" : "Normal range",
+    alert: (s) => s.sensors.temperature > 30,
+  },
+  {
+    key: "light",
+    label: "Light Level",
+    icon: Activity,
+    color: "text-yellow-600",
+    bg: "bg-yellow-50",
+    format: (s) => `${s.sensors.light.toFixed(1)} %`,
+    sub: (s) => s.sensors.light < 40 ? "Dark — bulb eligible" : "Sufficient light",
+    alert: (s) => s.sensors.light < 40,
+  },
+  {
+    key: "occupancy",
+    label: "Occupancy",
+    icon: Users,
+    color: "text-brand-primary",
+    bg: "bg-brand-primary/10",
+    format: (s) => s.sensors.occupancy ? "Occupied" : "Vacant",
+    sub: () => "PIR sensor",
+    alert: () => false,
+  },
+  {
+    key: "bulb",
+    label: "Smart Bulb",
+    icon: Lightbulb,
+    color: "text-purple-600",
+    bg: "bg-purple-50",
+    format: (s) => s.appliances.BULB.state,
+    sub: (s) => `${s.appliances.BULB.state === "DIMMED" ? "30" : s.appliances.BULB.state === "ON" ? "60" : "0"} W active`,
+    alert: () => false,
+  },
+  {
+    key: "energy",
+    label: "Session Energy",
+    icon: Zap,
+    color: "text-brand-primary",
+    bg: "bg-brand-primary/10",
+    format: (s) => `${s.energy.totalKwh.toFixed(3)} kWh`,
+    sub: () => "This session",
+    alert: () => false,
+  },
+  {
+    key: "cost",
+    label: "Est. Cost",
+    icon: Flame,
+    color: "text-rose-600",
+    bg: "bg-rose-50",
+    format: (s) => `${TARIFF.currency} ${s.energy.costEstimate.toFixed(0)}`,
+    sub: (s) => `@ ${TARIFF.ratePerKwh}/kWh`,
+    alert: () => false,
+  },
+];
 
 export function UserDashboardPage() {
-  const { token } = useAuth();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let ignore = false;
-    async function load() {
-      try {
-        const [dashboard, energy] = await Promise.all([
-          analyticsService.getDashboard(token),
-          analyticsService.getEnergy(token),
-        ]);
-        if (!ignore) {
-          setData({ dashboard, energy });
-        }
-      } catch {
-        // Fallback for demo/empty state as requested
-        if (!ignore) setData({ dashboard: {}, energy: {} });
-      } finally {
-        if (!ignore) setLoading(false);
-      }
-    }
-    void load();
-    return () => {
-      ignore = true;
-    };
-  }, [token]);
-
-  const metrics = useMemo(() => {
-    if (!data?.dashboard) return [];
-    const { dashboard } = data;
-    return [
-      {
-        icon: ThermometerSun,
-        label: "Temperature",
-        value: formatTemperature(dashboard.averageTemperature || 0),
-        tone: "warning",
-      },
-      {
-        icon: SparklesIcon,
-        label: "Light Level",
-        value: formatPercent(dashboard.averageLightLevel || 0),
-        tone: "info",
-      },
-      {
-        icon: Users,
-        label: "Occupancy",
-        value: formatNumber(dashboard.occupancySummary?.occupied || 0),
-        tone: "success",
-      },
-      {
-        icon: Lightbulb,
-        label: "Active Appliances",
-        value: formatNumber(dashboard.activeDevices || 0),
-        tone: "warning",
-      },
-      {
-        icon: Zap,
-        label: "Energy Usage",
-        value: `${formatNumber(dashboard.estimatedEnergyUsage || 0, 2)} kWh`,
-        tone: "info",
-      },
-      {
-        icon: Flame,
-        label: "Estimated Cost",
-        value: formatCurrency(dashboard.estimatedCost || 0),
-        tone: "danger",
-      },
-    ];
-  }, [data]);
-
-  if (loading) return <LoadingState />;
+  const { state } = useSimulation();
 
   return (
     <div className="page-shell">
+      {/* Live indicator */}
+      <div className="col-span-12 flex items-center gap-3">
+        <span className="relative flex h-3 w-3">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-success opacity-75" />
+          <span className="relative inline-flex h-3 w-3 rounded-full bg-brand-success" />
+        </span>
+        <p className="text-sm font-bold uppercase tracking-widest text-slate-600">
+          Live Simulation — Tick #{state.tick}
+        </p>
+      </div>
+
+      {/* Metric tiles */}
       <div className="col-span-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {metrics.map((metric) => (
-          <StatCard key={metric.label} {...metric} />
-        ))}
+        {METRIC_CARDS.map(({ key, label, icon: Icon, color, bg, format, sub, alert }) => {
+          const isAlert = alert(state);
+          return (
+            <div
+              key={key}
+              className={cn(
+                "relative overflow-hidden rounded-[2rem] p-6 ring-1 transition-all",
+                isAlert
+                  ? "bg-rose-50 ring-rose-300 shadow-md"
+                  : "bg-white/80 ring-slate-200/50 shadow-sm"
+              )}
+            >
+              <div className="flex items-center gap-4">
+                <div className={cn("flex h-12 w-12 items-center justify-center rounded-2xl", bg)}>
+                  <Icon className={cn("h-6 w-6", color)} />
+                </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-500">{label}</p>
+                  <p className="text-2xl font-extrabold tracking-tight text-slate-900">{format(state)}</p>
+                  <p className={cn("text-xs font-semibold mt-0.5", isAlert ? "text-rose-600" : "text-slate-400")}>
+                    {sub(state)}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Appliance power strip */}
+      <div className="col-span-12 rounded-[2rem] bg-white/80 ring-1 ring-slate-200/50 p-6 shadow-sm">
+        <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Active Load</p>
+        <div className="grid grid-cols-3 gap-4">
+          {[
+            { key: "BULB", label: "Bulb", watts: 60 },
+            { key: "TV",   label: "TV",   watts: 120 },
+            { key: "FAN",  label: "Fan",  watts: 75 },
+          ].map(({ key, label, watts }) => {
+            const app = state.appliances[key];
+            const isOn = app.state === "ON" || app.state === "DIMMED";
+            const effectiveW = app.state === "DIMMED" ? watts * 0.5 : isOn ? watts : 0;
+            return (
+              <div key={key} className={cn(
+                "flex flex-col items-center justify-center rounded-2xl py-5 gap-2 transition-all",
+                isOn ? "bg-brand-primary text-white shadow-lg" : "bg-slate-100 text-slate-400"
+              )}>
+                <p className="text-xs font-bold uppercase tracking-widest">{label}</p>
+                <p className="text-xl font-extrabold">{effectiveW}W</p>
+                <span className={cn(
+                  "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full",
+                  isOn ? "bg-white/20 text-white" : "bg-slate-200 text-slate-500"
+                )}>{app.state}</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
-  );
-}
-
-function SparklesIcon(props) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-      <path d="M5 3v4" />
-      <path d="M19 17v4" />
-      <path d="M3 5h4" />
-      <path d="M17 19h4" />
-    </svg>
   );
 }

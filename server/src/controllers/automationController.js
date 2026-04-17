@@ -2,41 +2,16 @@ import * as automationService from "../services/automationService.js";
 import { sendSuccess } from "../utils/response.js";
 
 export async function list(req, res) {
-  const data = await automationService.getAutomationRules(req.user);
+  const data = await automationService.getAutomationRules();
   return sendSuccess(res, data, "Automation rules retrieved successfully.");
 }
 
-export async function show(req, res) {
-  const data = await automationService.getAutomationRuleById(req.params.id, req.user);
-  return sendSuccess(res, data, "Automation rule retrieved successfully.");
-}
-
-export async function create(req, res) {
-  const data = await automationService.createAutomationRuleRecord(req.body, req.user);
-  return sendSuccess(res, data, "Automation rule created successfully.", 201);
-}
-
-export async function update(req, res) {
-  const data = await automationService.updateAutomationRuleRecord(req.params.id, req.body, req.user);
-  return sendSuccess(res, data, "Automation rule updated successfully.");
-}
-
 export async function enable(req, res) {
-  const data = await automationService.setAutomationRuleEnabledState(req.params.id, true, req.user);
+  const data = await automationService.setRuleEnabledState(req.params.id, true);
   return sendSuccess(res, data, "Automation rule enabled successfully.");
 }
 
 export async function disable(req, res) {
-  const data = await automationService.setAutomationRuleEnabledState(req.params.id, false, req.user);
+  const data = await automationService.setRuleEnabledState(req.params.id, false);
   return sendSuccess(res, data, "Automation rule disabled successfully.");
-}
-
-export async function destroy(req, res) {
-  const data = await automationService.deleteAutomationRuleRecord(req.params.id, req.user);
-  return sendSuccess(res, data, "Automation rule deleted successfully.");
-}
-
-export async function history(req, res) {
-  const data = await automationService.getAutomationHistory(req.user);
-  return sendSuccess(res, data, "Automation history retrieved successfully.");
 }
