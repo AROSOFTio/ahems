@@ -132,7 +132,6 @@ export function DashboardWorkspace({ mode = "app" }) {
         value: formatNumber(dashboard.totalRooms),
         trend: `${formatNumber(dashboard.occupancySummary?.occupied || 0)} occupied`,
         tone: "info",
-        helper: "These are the rooms currently visible to your role and workspace scope.",
       },
       {
         icon: Lightbulb,
@@ -140,7 +139,6 @@ export function DashboardWorkspace({ mode = "app" }) {
         value: formatNumber(dashboard.activeDevices),
         trend: `${formatNumber(dashboard.autoModeDevices || 0)} auto mode`,
         tone: "success",
-        helper: "Device posture blends manual overrides with simulation-driven automation.",
       },
       {
         icon: Zap,
@@ -148,7 +146,6 @@ export function DashboardWorkspace({ mode = "app" }) {
         value: formatCurrency(dashboard.estimatedCost || 0),
         trend: `${formatNumber(dashboard.estimatedEnergyUsage || 0, 2)} kWh`,
         tone: "warning",
-        helper: "Projected energy spend is derived from the simulated runtime and tariff baseline.",
       },
       {
         icon: mode === "admin" ? Users : Sparkles,
@@ -159,10 +156,6 @@ export function DashboardWorkspace({ mode = "app" }) {
             ? `${formatNumber(dashboard.totalLogs || 0)} audit events`
             : `${formatPercent(dashboard.averageLightLevel || 0)} light level`,
         tone: "info",
-        helper:
-          mode === "admin"
-            ? "The command center keeps the main governance metrics in one view."
-            : "Comfort conditions are updated from live room values and simulation adjustments.",
       },
     ];
   }, [mode, state.dashboard]);
@@ -200,39 +193,17 @@ export function DashboardWorkspace({ mode = "app" }) {
   return (
     <div className="page-shell">
       <PageHero
-        eyebrow={mode === "admin" ? "Admin control center" : "Simulation overview"}
+        eyebrow={mode === "admin" ? "Role Instance: Administrator" : "Role Instance: Resident/Operator"}
         title={
           mode === "admin"
-            ? "System operations dashboard"
-            : "Workspace operations dashboard"
-        }
-        description={
-          mode === "admin"
-            ? "Track users, rooms, appliances, alerts, automation activity, and energy performance from one admin view."
-            : "Track room health, appliance state, automation activity, alerts, and current energy performance."
+            ? "Executive Dashboard"
+            : "Energy Savings Simulation"
         }
         primaryAction={
           <Link to={mode === "admin" ? "/admin/users" : "/app/rooms"}>
-            <Button>{mode === "admin" ? "Review users" : "Manage rooms"}</Button>
+            <Button>{mode === "admin" ? "Reports Console" : "Simulate"}</Button>
           </Link>
         }
-        secondaryAction={
-          <Link to={mode === "admin" ? "/admin/categories" : "/app/sensors"}>
-            <Button variant="ghost">{mode === "admin" ? "Open lookups" : "Open simulation lab"}</Button>
-          </Link>
-        }
-        stats={[
-          {
-            label: "Unread notifications",
-            value: formatNumber(dashboard.recentAlerts?.filter((item) => !item.isRead).length || 0),
-            caption: "Alerts that still need acknowledgement in the current workspace.",
-          },
-          {
-            label: "Automation signal",
-            value: `${formatNumber(dashboard.recentAutomationActions?.length || 0)} recent`,
-            caption: "Recent rule and command activity across the current workspace.",
-          },
-        ]}
       />
 
       <div className="col-span-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
@@ -267,10 +238,9 @@ export function DashboardWorkspace({ mode = "app" }) {
         <SurfaceCard className="p-6">
           <SectionHeader
             title="Recent alerts"
-            description="Latest unresolved alerts and rule events."
             action={
               <Link to={mode === "admin" ? "/admin/notifications" : "/app/notifications"}>
-                <Button variant="ghost">Open notifications</Button>
+                <Button variant="ghost">Notifications</Button>
               </Link>
             }
           />
@@ -303,7 +273,6 @@ export function DashboardWorkspace({ mode = "app" }) {
         <SurfaceCard className="p-6">
           <SectionHeader
             title="Automation activity"
-            description="Latest rule and command activity."
           />
           <div className="mt-6 space-y-4">
             {(dashboard.recentAutomationActions || []).slice(0, 5).map((item) => (

@@ -1,15 +1,9 @@
-import { AlertCircle, LockKeyhole, ShieldCheck, UserCircle2 } from "lucide-react";
+import { AlertCircle, LockKeyhole, UserCircle2 } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 import { SurfaceCard } from "../../components/ui/SurfaceCard";
 import { useAuth } from "../../hooks/useAuth";
-
-const initialAccounts = [
-  { role: "Admin", email: "admin@ahems.io", password: "Admin@12345" },
-  { role: "Resident", email: "resident@ahems.io", password: "Resident@12345" },
-  { role: "Operator", email: "operator@ahems.io", password: "Operator@12345" },
-];
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -34,54 +28,16 @@ export function LoginPage() {
   }
 
   return (
-    <div className="grid min-h-screen gap-6 lg:grid-cols-[0.9fr,1.1fr]">
-      <SurfaceCard className="hero-card p-8 sm:p-10">
-        <span className="inline-flex rounded-full bg-brand-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-brand-primary">
-          Platform access
-        </span>
-        <h1 className="mt-5 font-display text-4xl font-extrabold tracking-tight text-slate-950">Sign in to AHEMS.</h1>
-        <p className="mt-4 max-w-2xl text-base leading-8 text-brand-muted">
-          Access room operations, automation rules, analytics, alerts, reports, and system administration from one controlled workspace.
-        </p>
-
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/80 p-5">
-            <ShieldCheck className="h-5 w-5 text-brand-primary" />
-            <p className="mt-4 text-sm font-semibold text-slate-950">Role-aware access</p>
-            <p className="mt-2 text-sm leading-6 text-brand-muted">Admin, resident, and operator views stay separated by protected routing.</p>
-          </div>
-          <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/80 p-5">
-            <ShieldCheck className="h-5 w-5 text-brand-accent" />
-            <p className="mt-4 text-sm font-semibold text-slate-950">Operational modules</p>
-            <p className="mt-2 text-sm leading-6 text-brand-muted">Rooms, appliances, simulation, automation, reporting, and logs are available after sign-in.</p>
-          </div>
-          <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/80 p-5">
-            <ShieldCheck className="h-5 w-5 text-brand-success" />
-            <p className="mt-4 text-sm font-semibold text-slate-950">JWT sessions</p>
-            <p className="mt-2 text-sm leading-6 text-brand-muted">Authentication is backed by the API and restored automatically on reload.</p>
-          </div>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50/50 p-4">
+      <div className="mb-8 text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary shadow-sm mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
         </div>
+        <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-950">AHEMS Portal</h1>
+        <p className="mt-2 text-sm font-semibold uppercase tracking-[0.1em] text-brand-muted">Energy Savings Simulator</p>
+      </div>
 
-        <div className="mt-8 rounded-[2rem] border border-slate-200/70 bg-white/80 p-6">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-sm font-semibold text-slate-950">Initial accounts</p>
-              <p className="mt-1 text-sm text-brand-muted">Use these seeded accounts after first deployment.</p>
-            </div>
-          </div>
-          <div className="mt-5 space-y-3">
-            {initialAccounts.map((account) => (
-              <div key={account.role} className="rounded-[1.5rem] border border-slate-200/70 bg-slate-50/80 p-4">
-                <p className="text-sm font-semibold text-slate-950">{account.role}</p>
-                <p className="mt-2 text-sm text-brand-muted">{account.email}</p>
-                <p className="mt-1 font-mono text-xs text-slate-700">{account.password}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </SurfaceCard>
-
-      <SurfaceCard className="p-8 sm:p-10">
+      <SurfaceCard className="w-full max-w-md p-8 sm:p-10 shadow-lg">
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
             <h2 className="font-display text-2xl font-bold text-slate-950">Welcome back</h2>
