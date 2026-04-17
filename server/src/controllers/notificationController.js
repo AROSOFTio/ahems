@@ -2,7 +2,7 @@ import * as notificationService from "../services/notificationService.js";
 import { sendSuccess } from "../utils/response.js";
 
 export async function list(req, res) {
-  const data = await notificationService.getNotifications(req.user);
+  const data = await notificationService.getNotificationsByFilter(req.user, req.query);
   return sendSuccess(res, data, "Notifications retrieved successfully.");
 }
 
@@ -15,4 +15,3 @@ export async function create(req, res) {
   const data = await notificationService.createNotification(req.body, req.user);
   return sendSuccess(res, data, "Notification created successfully.", 201);
 }
-

@@ -54,7 +54,11 @@ function ProtectedRoute({ roles }) {
 }
 
 function PublicOnlyRoute() {
-  const { isAuthenticated, hasRole } = useAuth();
+  const { isAuthenticated, hasRole, loading } = useAuth();
+
+  if (loading) {
+    return <div className="flex min-h-screen items-center justify-center text-sm text-brand-muted">Loading workspace...</div>;
+  }
 
   if (isAuthenticated) {
     return <Navigate to={hasRole("admin") ? "/admin/dashboard" : "/app/dashboard"} replace />;
@@ -138,4 +142,3 @@ function AppRouter() {
 }
 
 export default AppRouter;
-

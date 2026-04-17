@@ -2,10 +2,12 @@ import {
   createAppliance,
   deleteAppliance,
   findApplianceById,
+  listRecentEnergyLogsForAppliance,
   listAppliancesForUser,
   updateAppliance,
 } from "../models/applianceModel.js";
 import { createActivityLog } from "../models/activityLogModel.js";
+import { listRecentDeviceCommandsForAppliance } from "../models/deviceCommandModel.js";
 import { findRoomById, userHasRoomAccess } from "../models/roomModel.js";
 import { ApiError } from "../utils/ApiError.js";
 
@@ -54,7 +56,16 @@ export async function getApplianceById(id, user) {
     }
   }
 
-  return appliance;
+  const [recentEnergyLogs, recentCommands] = await Promise.all([
+    listRecentEnergyLogsForAppliance(appliance.id),
+    listRecentDeviceCommandsForAppliance(appliance.id),
+  ]);
+
+  return {
+    ...appliance,
+    recentEnergyLogs,
+    recentCommands,
+  };
 }
 
 export async function createApplianceRecord(payload, user) {
@@ -69,10 +80,10 @@ export async function createApplianceRecord(payload, user) {
       powerRatingWatts: Number(payload.powerRatingWatts),
       status: payload.status || "OFF",
       mode: payload.mode || "MANUAL",
-      brightnessLevel: payload.brightnessLevel || 0,
-      runtimeMinutesToday: payload.runtimeMinutesToday || 0,
-      estimatedEnergyKwh: payload.estimatedEnergyKwh || 0,
-      estimatedCost: payload.estimatedCost || 0,
+      brightnessLevel: payload.brightnessLevel !== undefined ? Number(payload.brightnessLevel) : 0,
+      runtimeMinutesToday: payload.runtimeMinutesToday !== undefined ? Number(payload.runtimeMinutesToday) : 0,
+      estimatedEnergyKwh: payload.estimatedEnergyKwh !== undefined ? Number(payload.estimatedEnergyKwh) : 0,
+      estimatedCost: payload.estimatedCost !== undefined ? Number(payload.estimatedCost) : 0,
       notes: payload.notes || null,
     },
   );

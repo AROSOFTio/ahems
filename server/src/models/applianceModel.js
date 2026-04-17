@@ -154,3 +154,26 @@ export async function countAppliances() {
   const row = await queryOne("SELECT COUNT(*) AS total_appliances FROM appliances");
   return row?.totalAppliances ?? 0;
 }
+
+export async function listRecentEnergyLogsForAppliance(applianceId, limit = 8) {
+  return query(
+    `
+      SELECT
+        id,
+        room_id,
+        appliance_id,
+        usage_date,
+        usage_kwh,
+        cost_estimate,
+        currency,
+        runtime_minutes,
+        source,
+        created_at
+      FROM energy_logs
+      WHERE appliance_id = ?
+      ORDER BY usage_date DESC, created_at DESC
+      LIMIT ?
+    `,
+    [applianceId, limit],
+  );
+}

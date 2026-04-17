@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { SimulationWorkspace } from "../shared/SimulationWorkspace";
 
 export function SensorsPage() {
-  return <ModuleWorkspace content={pageContent.sensors} />;
+  return <SimulationWorkspace mode="app" />;
 }
-

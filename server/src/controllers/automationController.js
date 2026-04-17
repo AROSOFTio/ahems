@@ -21,6 +21,16 @@ export async function update(req, res) {
   return sendSuccess(res, data, "Automation rule updated successfully.");
 }
 
+export async function enable(req, res) {
+  const data = await automationService.setAutomationRuleEnabledState(req.params.id, true, req.user);
+  return sendSuccess(res, data, "Automation rule enabled successfully.");
+}
+
+export async function disable(req, res) {
+  const data = await automationService.setAutomationRuleEnabledState(req.params.id, false, req.user);
+  return sendSuccess(res, data, "Automation rule disabled successfully.");
+}
+
 export async function destroy(req, res) {
   const data = await automationService.deleteAutomationRuleRecord(req.params.id, req.user);
   return sendSuccess(res, data, "Automation rule deleted successfully.");

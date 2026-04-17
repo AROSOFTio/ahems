@@ -8,6 +8,7 @@ import automationRoutes from "./automationRoutes.js";
 import notificationRoutes from "./notificationRoutes.js";
 import reportRoutes from "./reportRoutes.js";
 import analyticsRoutes from "./analyticsRoutes.js";
+import catalogRoutes from "./catalogRoutes.js";
 import settingsRoutes from "./settingsRoutes.js";
 import adminRoutes from "./adminRoutes.js";
 import { pingDatabase } from "../config/db.js";
@@ -40,8 +41,8 @@ router.use("/automation-rules", automationRoutes);
 router.use("/notifications", notificationRoutes);
 router.use("/reports", reportRoutes);
 router.use("/analytics", analyticsRoutes);
+router.use("/catalog", catalogRoutes);
 router.use("/settings", settingsRoutes);
 router.use("/admin", adminRoutes);
 
 export default router;
-

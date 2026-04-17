@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { RoomsWorkspace } from "../shared/RoomsWorkspace";
 
 export function AdminRoomsPage() {
-  return <ModuleWorkspace content={pageContent.adminRooms} />;
+  return <RoomsWorkspace mode="admin" />;
 }
-

@@ -11,8 +11,8 @@ export async function users(_req, res) {
   return sendSuccess(res, data, "Admin users overview retrieved successfully.");
 }
 
-export async function logs(_req, res) {
-  const data = await adminService.getAdminLogs();
+export async function logs(req, res) {
+  const data = await adminService.getAdminLogs(req.query);
   return sendSuccess(res, data, "Admin logs retrieved successfully.");
 }
 
@@ -20,4 +20,3 @@ export async function analytics(_req, res) {
   const data = await adminService.getSystemAnalytics();
   return sendSuccess(res, data, "System analytics retrieved successfully.");
 }
-

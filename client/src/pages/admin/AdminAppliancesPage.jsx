@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { AppliancesWorkspace } from "../shared/AppliancesWorkspace";
 
 export function AdminAppliancesPage() {
-  return <ModuleWorkspace content={pageContent.adminAppliances} />;
+  return <AppliancesWorkspace mode="admin" />;
 }
-

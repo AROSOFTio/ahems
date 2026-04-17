@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { ReportsWorkspace } from "../shared/ReportsWorkspace";
 
 export function ReportsPage() {
-  return <ModuleWorkspace content={pageContent.reports} />;
+  return <ReportsWorkspace mode="app" />;
 }
-

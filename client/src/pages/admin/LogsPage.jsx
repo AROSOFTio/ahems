@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { LogsWorkspace } from "../shared/LogsWorkspace";
 
 export function LogsPage() {
-  return <ModuleWorkspace content={pageContent.logs} />;
+  return <LogsWorkspace />;
 }
-

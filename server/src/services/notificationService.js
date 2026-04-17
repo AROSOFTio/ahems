@@ -1,5 +1,6 @@
 import { ApiError } from "../utils/ApiError.js";
 import { createActivityLog } from "../models/activityLogModel.js";
+import { listRoomsForUser, userHasRoomAccess } from "../models/roomModel.js";
 import {
   createNotification as createNotificationRecord,
   findNotificationById,
@@ -11,6 +12,14 @@ export async function getNotifications(user) {
   return listNotificationsForUser(user);
 }
 
+export async function getNotificationsByFilter(user, filters) {
+  const roomIds = user.role === "admin" ? [] : (await listRoomsForUser(user)).map((room) => room.id);
+  return listNotificationsForUser(user, {
+    ...filters,
+    roomIds,
+  });
+}
+
 export async function markNotificationAsRead(id, user) {
   const notification = await findNotificationById(id);
 
@@ -19,7 +28,9 @@ export async function markNotificationAsRead(id, user) {
   }
 
   if (user.role !== "admin" && notification.userId !== user.id) {
-    throw new ApiError(403, "You do not have access to this notification.");
+    if (!notification.roomId || !(await userHasRoomAccess(user.id, notification.roomId))) {
+      throw new ApiError(403, "You do not have access to this notification.");
+    }
   }
 
   const updated = await markNotificationAsReadRecord(id);

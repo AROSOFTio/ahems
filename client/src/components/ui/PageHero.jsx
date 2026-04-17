@@ -1,3 +1,4 @@
+import { isValidElement } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "./Button";
 import { SurfaceCard } from "./SurfaceCard";
@@ -17,13 +18,15 @@ export function PageHero({ eyebrow, title, description, primaryAction, secondary
             <p className="max-w-2xl text-base leading-7 text-brand-muted sm:text-lg">{description}</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            {primaryAction ? (
+            {primaryAction && isValidElement(primaryAction) ? primaryAction : null}
+            {primaryAction && !isValidElement(primaryAction) ? (
               <Button className="px-5 py-3">
                 {primaryAction}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             ) : null}
-            {secondaryAction ? (
+            {secondaryAction && isValidElement(secondaryAction) ? secondaryAction : null}
+            {secondaryAction && !isValidElement(secondaryAction) ? (
               <Button variant="ghost" className="px-5 py-3">
                 {secondaryAction}
               </Button>
@@ -43,4 +46,3 @@ export function PageHero({ eyebrow, title, description, primaryAction, secondary
     </SurfaceCard>
   );
 }
-

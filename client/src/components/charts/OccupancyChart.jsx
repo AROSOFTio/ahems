@@ -1,7 +1,15 @@
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { SurfaceCard } from "../ui/SurfaceCard";
 
-export function OccupancyChart({ data, title, description }) {
+export function OccupancyChart({
+  data,
+  title,
+  description,
+  leftKey = "occupied",
+  rightKey = "vacant",
+  leftLabel = "Occupied",
+  rightLabel = "Vacant",
+}) {
   return (
     <SurfaceCard className="p-6">
       <div className="mb-6 space-y-1">
@@ -22,12 +30,11 @@ export function OccupancyChart({ data, title, description }) {
               }}
             />
             <Legend />
-            <Bar dataKey="occupied" fill="#3543bb" radius={[10, 10, 0, 0]} />
-            <Bar dataKey="vacant" fill="#06b6d4" radius={[10, 10, 0, 0]} />
+            <Bar dataKey={leftKey} name={leftLabel} fill="#3543bb" radius={[10, 10, 0, 0]} />
+            <Bar dataKey={rightKey} name={rightLabel} fill="#06b6d4" radius={[10, 10, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
     </SurfaceCard>
   );
 }
-

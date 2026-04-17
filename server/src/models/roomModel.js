@@ -18,7 +18,27 @@ const roomSelect = `
     r.updated_at,
     rt.name AS room_type_name,
     CONCAT(u.first_name, ' ', u.last_name) AS owner_name,
-    u.email AS owner_email
+    u.email AS owner_email,
+    (
+      SELECT COUNT(*)
+      FROM appliances ra
+      WHERE ra.room_id = r.id
+    ) AS appliance_count,
+    (
+      SELECT COUNT(*)
+      FROM appliances ra
+      WHERE ra.room_id = r.id AND ra.status IN ('ON', 'DIMMED')
+    ) AS active_appliance_count,
+    (
+      SELECT ROUND(COALESCE(SUM(el.usage_kwh), 0), 3)
+      FROM energy_logs el
+      WHERE el.room_id = r.id
+    ) AS estimated_energy_kwh_total,
+    (
+      SELECT ROUND(COALESCE(SUM(el.cost_estimate), 0), 2)
+      FROM energy_logs el
+      WHERE el.room_id = r.id
+    ) AS estimated_cost_total
   FROM rooms r
   INNER JOIN room_types rt ON rt.id = r.room_type_id
   INNER JOIN users u ON u.id = r.owner_user_id
@@ -199,4 +219,69 @@ export async function deleteRoom(id) {
 export async function countRooms() {
   const row = await queryOne("SELECT COUNT(*) AS total_rooms FROM rooms");
   return row?.totalRooms ?? 0;
+}
+
+export async function listRoomAppliances(roomId) {
+  return query(
+    `
+      SELECT
+        a.id,
+        a.room_id,
+        a.category_id,
+        a.name,
+        a.power_rating_watts,
+        a.status,
+        a.mode,
+        a.brightness_level,
+        a.runtime_minutes_today,
+        a.estimated_energy_kwh,
+        a.estimated_cost,
+        a.notes,
+        a.last_state_changed_at,
+        a.created_at,
+        a.updated_at,
+        ac.name AS category_name,
+        ac.icon AS category_icon
+      FROM appliances a
+      INNER JOIN appliance_categories ac ON ac.id = a.category_id
+      WHERE a.room_id = ?
+      ORDER BY a.created_at DESC
+    `,
+    [roomId],
+  );
+}
+
+export async function getRoomEnergySummary(roomId) {
+  return queryOne(
+    `
+      SELECT
+        ROUND(COALESCE(SUM(usage_kwh), 0), 3) AS total_usage_kwh,
+        ROUND(COALESCE(SUM(cost_estimate), 0), 2) AS total_cost,
+        MAX(usage_date) AS latest_usage_date
+      FROM energy_logs
+      WHERE room_id = ?
+    `,
+    [roomId],
+  );
+}
+
+export async function listRecentRoomReadings(roomId, limit = 8) {
+  return query(
+    `
+      SELECT
+        id,
+        room_id,
+        reading_type,
+        reading_value,
+        unit,
+        source,
+        recorded_at,
+        created_at
+      FROM sensor_readings
+      WHERE room_id = ?
+      ORDER BY recorded_at DESC
+      LIMIT ?
+    `,
+    [roomId, limit],
+  );
 }

@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { SettingsWorkspace } from "../shared/SettingsWorkspace";
 
 export function AdminSettingsPage() {
-  return <ModuleWorkspace content={pageContent.adminSettings} />;
+  return <SettingsWorkspace mode="admin" />;
 }
-

@@ -3,6 +3,9 @@ import {
   createRoom,
   deleteRoom,
   findRoomById,
+  getRoomEnergySummary,
+  listRecentRoomReadings,
+  listRoomAppliances,
   listRoomsForUser,
   updateRoom,
   userHasRoomAccess,
@@ -22,7 +25,19 @@ export async function getRoomById(id, user) {
   if (user.role !== "admin" && !isOwner && !hasOperatorAccess) {
     throw new ApiError(403, "You do not have access to this room.");
   }
-  return room;
+
+  const [appliances, energySummary, recentReadings] = await Promise.all([
+    listRoomAppliances(room.id),
+    getRoomEnergySummary(room.id),
+    listRecentRoomReadings(room.id),
+  ]);
+
+  return {
+    ...room,
+    appliances,
+    energySummary,
+    recentReadings,
+  };
 }
 
 export async function createRoomRecord(payload, user) {
@@ -34,8 +49,8 @@ export async function createRoomRecord(payload, user) {
       description: payload.description || null,
       floorLevel: payload.floorLevel || null,
       occupancyState: payload.occupancyState || "VACANT",
-      temperature: payload.temperature || 22,
-      lightLevel: payload.lightLevel || 65,
+      temperature: payload.temperature !== undefined ? Number(payload.temperature) : 22,
+      lightLevel: payload.lightLevel !== undefined ? Number(payload.lightLevel) : 65,
       thresholds: payload.thresholds || { maxTemp: 25, minLight: 45 },
     },
   );

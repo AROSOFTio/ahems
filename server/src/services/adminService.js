@@ -1,5 +1,5 @@
 import { queryOne } from "../config/db.js";
-import { countUsers, listUsers } from "../models/userModel.js";
+import { countUsers, countUsersByRole, listUsers } from "../models/userModel.js";
 import { countReports } from "../models/reportModel.js";
 import { countActivityLogs, listActivityLogs } from "../models/activityLogModel.js";
 import { countUnreadNotifications } from "../models/notificationModel.js";
@@ -28,11 +28,22 @@ export async function getAdminDashboardSummary() {
 }
 
 export async function getAdminUsersOverview() {
-  return listUsers();
+  const [users, countsByRole] = await Promise.all([listUsers(), countUsersByRole()]);
+
+  return {
+    users,
+    countsByRole,
+  };
 }
 
-export async function getAdminLogs() {
-  return listActivityLogs(200);
+export async function getAdminLogs(filters = {}) {
+  return listActivityLogs({
+    limit: filters.limit || 200,
+    moduleName: filters.moduleName || null,
+    actorRole: filters.actorRole || null,
+    entityType: filters.entityType || null,
+    query: filters.query || null,
+  });
 }
 
 export async function getSystemAnalytics() {

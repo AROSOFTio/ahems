@@ -23,10 +23,41 @@ export function AuthProvider({ children }) {
       setToken(parsed.token);
     } catch {
       window.localStorage.removeItem(STORAGE_KEY);
-    } finally {
-      setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function bootstrapSession() {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const payload = await authService.me(token);
+
+        if (!ignore) {
+          persistSession(payload.user, token);
+        }
+      } catch {
+        if (!ignore) {
+          clearSession();
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    }
+
+    void bootstrapSession();
+
+    return () => {
+      ignore = true;
+    };
+  }, [token]);
 
   const persistSession = (nextUser, nextToken) => {
     setUser(nextUser);
@@ -73,6 +104,8 @@ export function AuthProvider({ children }) {
     return payload.user;
   };
 
+  const changePassword = async (payload) => authService.changePassword(payload, token);
+
   const value = useMemo(
     () => ({
       user,
@@ -84,6 +117,7 @@ export function AuthProvider({ children }) {
       logout,
       refreshProfile,
       updateProfile,
+      changePassword,
       hasRole: (roles) => {
         if (!user) return false;
         const allowedRoles = Array.isArray(roles) ? roles : [roles];
@@ -105,4 +139,3 @@ export function useAuth() {
 
   return context;
 }
-

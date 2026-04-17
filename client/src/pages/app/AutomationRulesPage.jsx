@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { AutomationWorkspace } from "../shared/AutomationWorkspace";
 
 export function AutomationRulesPage() {
-  return <ModuleWorkspace content={pageContent.automationRules} />;
+  return <AutomationWorkspace mode="app" />;
 }
-

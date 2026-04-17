@@ -43,7 +43,42 @@ export async function createActivityLog({
   );
 }
 
-export async function listActivityLogs(limit = 100) {
+export async function listActivityLogs(limitOrFilters = 100) {
+  const filters =
+    typeof limitOrFilters === "object" && limitOrFilters !== null
+      ? limitOrFilters
+      : { limit: limitOrFilters };
+
+  const clauses = [];
+  const params = [];
+
+  if (filters.moduleName) {
+    clauses.push("al.module_name = ?");
+    params.push(filters.moduleName);
+  }
+
+  if (filters.actorRole) {
+    clauses.push("al.actor_role = ?");
+    params.push(filters.actorRole);
+  }
+
+  if (filters.entityType) {
+    clauses.push("al.entity_type = ?");
+    params.push(filters.entityType);
+  }
+
+  if (filters.userId) {
+    clauses.push("al.user_id = ?");
+    params.push(filters.userId);
+  }
+
+  if (filters.query) {
+    clauses.push("(al.action LIKE ? OR al.description LIKE ? OR CONCAT(u.first_name, ' ', u.last_name) LIKE ?)");
+    params.push(`%${filters.query}%`, `%${filters.query}%`, `%${filters.query}%`);
+  }
+
+  const limit = Number(filters.limit || 100);
+
   return query(
     `
       SELECT
@@ -63,10 +98,11 @@ export async function listActivityLogs(limit = 100) {
         u.email AS actor_email
       FROM activity_logs al
       LEFT JOIN users u ON u.id = al.user_id
+      ${clauses.length ? `WHERE ${clauses.join(" AND ")}` : ""}
       ORDER BY al.created_at DESC
       LIMIT ?
     `,
-    [limit],
+    [...params, limit],
   );
 }
 

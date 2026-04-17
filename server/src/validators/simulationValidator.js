@@ -16,3 +16,24 @@ export function validateSimulationRandomize(req) {
   return !req.body.roomId ? ["Room ID is required."] : [];
 }
 
+export function validateSimulationCommand(req) {
+  const errors = [];
+
+  if (!req.body.commandText && !req.body.action) {
+    errors.push("Command text or action is required.");
+  }
+
+  if (req.body.roomId !== undefined && Number.isNaN(Number(req.body.roomId))) {
+    errors.push("Room ID must be numeric.");
+  }
+
+  if (req.body.applianceId !== undefined && Number.isNaN(Number(req.body.applianceId))) {
+    errors.push("Appliance ID must be numeric.");
+  }
+
+  if (req.body.brightnessLevel !== undefined && Number.isNaN(Number(req.body.brightnessLevel))) {
+    errors.push("Brightness level must be numeric.");
+  }
+
+  return errors;
+}

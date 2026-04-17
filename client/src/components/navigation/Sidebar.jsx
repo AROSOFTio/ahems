@@ -6,8 +6,10 @@ import { useAuth } from "../../hooks/useAuth";
 import { useUI } from "../../hooks/useUI";
 import { cn } from "../../utils/cn";
 
-function SidebarBody({ role, onNavigate }) {
-  const navigation = role === "admin" ? adminNavigation : appNavigation;
+function SidebarBody({ role, scope, onNavigate }) {
+  const navigation = (scope === "admin" ? adminNavigation : appNavigation).filter(
+    (item) => !item.roles || item.roles.includes(role),
+  );
   const { user } = useAuth();
 
   return (
@@ -23,7 +25,7 @@ function SidebarBody({ role, onNavigate }) {
       <div className="mx-4 rounded-[1.75rem] border border-slate-200/70 bg-slate-950 p-5 text-white shadow-ambient">
         <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Active workspace</p>
         <p className="mt-3 font-display text-xl font-bold">
-          {role === "admin" ? "Control Center" : "Resident Console"}
+          {role === "admin" ? "Control Center" : role === "operator" ? "Operator Station" : "Resident Console"}
         </p>
         <p className="mt-2 text-sm text-slate-300">
           Signed in as {user?.name || "Simulation user"} with {user?.role || role} permissions.
@@ -51,22 +53,26 @@ function SidebarBody({ role, onNavigate }) {
       </nav>
 
       <div className="mx-4 mb-4 rounded-[1.75rem] border border-brand-primary/10 bg-brand-primary/5 p-5">
-        <p className="text-sm font-semibold text-slate-900">Simulation engine</p>
+        <p className="text-sm font-semibold text-slate-900">
+          {scope === "admin" ? "Defense-ready focus" : "Simulation engine"}
+        </p>
         <p className="mt-2 text-sm text-brand-muted">
-          Temperature, lighting, occupancy, and command flows are ready for the next phase of interactive logic.
+          {scope === "admin"
+            ? "The workspace is intentionally trimmed to the core story: access, rooms, appliances, automation, reports, and governance."
+            : "Temperature, lighting, occupancy, command flows, automation, and reporting are ready for interactive testing."}
         </p>
       </div>
     </div>
   );
 }
 
-export function Sidebar({ role }) {
+export function Sidebar({ role, scope }) {
   const { sidebarOpen, closeSidebar } = useUI();
 
   return (
     <>
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-white/70 bg-white/75 backdrop-blur xl:block">
-        <SidebarBody role={role} />
+        <SidebarBody role={role} scope={scope} />
       </aside>
 
       <div
@@ -93,9 +99,8 @@ export function Sidebar({ role }) {
             <X className="h-5 w-5" />
           </button>
         </div>
-        <SidebarBody role={role} onNavigate={closeSidebar} />
+        <SidebarBody role={role} scope={scope} onNavigate={closeSidebar} />
       </aside>
     </>
   );
 }
-

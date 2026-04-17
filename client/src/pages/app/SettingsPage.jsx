@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { SettingsWorkspace } from "../shared/SettingsWorkspace";
 
 export function SettingsPage() {
-  return <ModuleWorkspace content={pageContent.settings} />;
+  return <SettingsWorkspace mode="app" />;
 }
-

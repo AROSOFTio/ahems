@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { CatalogAdminWorkspace } from "../shared/CatalogAdminWorkspace";
 
 export function CategoriesPage() {
-  return <ModuleWorkspace content={pageContent.categories} />;
+  return <CatalogAdminWorkspace />;
 }
-

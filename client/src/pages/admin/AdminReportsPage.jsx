@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { ReportsWorkspace } from "../shared/ReportsWorkspace";
 
 export function AdminReportsPage() {
-  return <ModuleWorkspace content={pageContent.adminReports} />;
+  return <ReportsWorkspace mode="admin" />;
 }
-

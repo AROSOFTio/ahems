@@ -1,4 +1,13 @@
 export function validateReportGeneration(req) {
-  return !req.body.reportType ? ["Report type is required."] : [];
-}
+  const errors = [];
 
+  if (!req.body.reportType) {
+    errors.push("Report type is required.");
+  }
+
+  if (req.body.format && !["CSV", "PDF"].includes(req.body.format)) {
+    errors.push("Report format must be CSV or PDF.");
+  }
+
+  return errors;
+}

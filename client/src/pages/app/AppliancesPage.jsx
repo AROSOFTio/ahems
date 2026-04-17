@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { AppliancesWorkspace } from "../shared/AppliancesWorkspace";
 
 export function AppliancesPage() {
-  return <ModuleWorkspace content={pageContent.appliances} />;
+  return <AppliancesWorkspace mode="app" />;
 }
-

@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { NotificationsWorkspace } from "../shared/NotificationsWorkspace";
 
 export function NotificationsPage() {
-  return <ModuleWorkspace content={pageContent.notifications} />;
+  return <NotificationsWorkspace mode="app" />;
 }
-

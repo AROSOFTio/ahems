@@ -16,3 +16,7 @@ export async function randomize(req, res) {
   return sendSuccess(res, data, "Simulation values randomized successfully.");
 }
 
+export async function command(req, res) {
+  const data = await simulationService.runCommandSimulation(req.body, req.user);
+  return sendSuccess(res, data, "Command executed successfully.");
+}

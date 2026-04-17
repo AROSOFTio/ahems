@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { EnergyAnalyticsWorkspace } from "../shared/EnergyAnalyticsWorkspace";
 
 export function EnergyMonitoringPage() {
-  return <ModuleWorkspace content={pageContent.energyMonitoring} />;
+  return <EnergyAnalyticsWorkspace mode="app" />;
 }
-

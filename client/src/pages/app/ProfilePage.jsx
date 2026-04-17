@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { ProfileWorkspace } from "../shared/ProfileWorkspace";
 
 export function ProfilePage() {
-  return <ModuleWorkspace content={pageContent.profile} />;
+  return <ProfileWorkspace />;
 }
-

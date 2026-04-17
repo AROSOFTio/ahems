@@ -1,7 +1,5 @@
-import { ModuleWorkspace } from "../../components/ui/ModuleWorkspace";
-import { pageContent } from "../../constants/pageContent";
+import { NotificationsWorkspace } from "../shared/NotificationsWorkspace";
 
 export function AdminNotificationsPage() {
-  return <ModuleWorkspace content={pageContent.adminNotifications} />;
+  return <NotificationsWorkspace mode="admin" />;
 }
-

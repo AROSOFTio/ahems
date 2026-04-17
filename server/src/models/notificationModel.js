@@ -20,12 +20,51 @@ const notificationSelect = `
   LEFT JOIN appliances a ON a.id = n.appliance_id
 `;
 
-export async function listNotificationsForUser(user) {
-  if (user.role === "admin") {
-    return query(`${notificationSelect} ORDER BY n.created_at DESC`);
+export async function listNotificationsForUser(user, filters = {}) {
+  const clauses = [];
+  const params = [];
+
+  if (user.role !== "admin") {
+    const roomIds = filters.roomIds || [];
+
+    if (roomIds.length) {
+      clauses.push(`(n.user_id = ? OR n.user_id IS NULL OR n.room_id IN (${roomIds.map(() => "?").join(", ")}))`);
+      params.push(user.id, ...roomIds);
+    } else {
+      clauses.push("(n.user_id = ? OR n.user_id IS NULL)");
+      params.push(user.id);
+    }
   }
 
-  return query(`${notificationSelect} WHERE n.user_id = ? ORDER BY n.created_at DESC`, [user.id]);
+  if (filters.severity) {
+    clauses.push("n.severity = ?");
+    params.push(filters.severity);
+  }
+
+  if (filters.type) {
+    clauses.push("n.type = ?");
+    params.push(filters.type);
+  }
+
+  if (filters.isRead === "true" || filters.isRead === true) {
+    clauses.push("n.is_read = 1");
+  }
+
+  if (filters.isRead === "false" || filters.isRead === false) {
+    clauses.push("n.is_read = 0");
+  }
+
+  if (filters.query) {
+    clauses.push("(n.title LIKE ? OR n.message LIKE ?)");
+    params.push(`%${filters.query}%`, `%${filters.query}%`);
+  }
+
+  const limit = Number(filters.limit || 200);
+
+  return query(
+    `${notificationSelect} ${clauses.length ? `WHERE ${clauses.join(" AND ")}` : ""} ORDER BY n.created_at DESC LIMIT ?`,
+    [...params, limit],
+  );
 }
 
 export async function findNotificationById(id) {
