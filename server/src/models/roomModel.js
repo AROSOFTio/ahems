@@ -34,6 +34,64 @@ export async function findRoomById(id) {
   return queryOne(`${roomSelect} WHERE r.id = ? LIMIT 1`, [id]);
 }
 
+export async function listRoomsForUser(user) {
+  if (!user) {
+    return [];
+  }
+
+  if (user.role === "admin") {
+    return listRooms();
+  }
+
+  return query(`${roomSelect} WHERE r.owner_user_id = ? ORDER BY r.created_at DESC`, [user.id]);
+}
+
+export async function listRoomAppliances(roomId) {
+  return query(
+    `
+      SELECT
+        a.id,
+        a.room_id,
+        a.category_id,
+        a.name,
+        a.power_rating_watts,
+        a.status,
+        a.mode,
+        a.brightness_level,
+        a.runtime_minutes_today,
+        a.estimated_energy_kwh,
+        a.estimated_cost,
+        a.last_state_changed_at,
+        a.created_at,
+        a.updated_at,
+        r.owner_user_id AS room_owner_user_id,
+        r.name AS room_name,
+        ac.name AS category_name,
+        ac.icon AS category_icon
+      FROM appliances a
+      INNER JOIN rooms r ON r.id = a.room_id
+      INNER JOIN appliance_categories ac ON ac.id = a.category_id
+      WHERE a.room_id = ?
+      ORDER BY a.id ASC
+    `,
+    [roomId],
+  );
+}
+
+export async function userHasRoomAccess(userId, roomId) {
+  const row = await queryOne(
+    `
+      SELECT id
+      FROM rooms
+      WHERE id = ? AND owner_user_id = ?
+      LIMIT 1
+    `,
+    [roomId, userId],
+  );
+
+  return Boolean(row);
+}
+
 export async function updateRoomSensorState(id, updates) {
   const fields = [];
   const values = [];

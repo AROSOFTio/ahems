@@ -32,6 +32,25 @@ export async function findApplianceById(id) {
   return queryOne(`${applianceSelect} WHERE a.id = ? LIMIT 1`, [id]);
 }
 
+export async function listAppliancesForUser(user) {
+  if (!user) {
+    return [];
+  }
+
+  if (user.role === "admin") {
+    return listAppliances();
+  }
+
+  return query(
+    `
+      ${applianceSelect}
+      WHERE r.owner_user_id = ?
+      ORDER BY a.id ASC
+    `,
+    [user.id],
+  );
+}
+
 export async function updateAppliance(id, updates) {
   const fields = [];
   const values = [];
