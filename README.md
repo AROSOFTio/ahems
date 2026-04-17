@@ -55,7 +55,6 @@ cp .env.example .env
 Important variables:
 
 - `APP_PORT=3002`
-- `SERVER_PORT=5000`
 - `MYSQL_HOST`
 - `MYSQL_PORT`
 - `MYSQL_DATABASE`
@@ -64,6 +63,8 @@ Important variables:
 - `JWT_SECRET`
 - `CLIENT_PUBLIC_URL`
 - `VITE_API_BASE_URL=/api`
+
+The backend container listens on an internal fixed port of `5000` in Docker so that the Nginx proxy can always reach it.
 
 When MySQL is managed outside Docker on the same VPS, keep `MYSQL_HOST=host.docker.internal` unless your server requires a different host value.
 
