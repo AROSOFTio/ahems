@@ -1,7 +1,6 @@
 import { Flame, Home, Lightbulb, ThermometerSun, Users, Zap } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { CostTrendChart } from "../../components/charts/CostTrendChart";
-import { EnergyUsageChart } from "../../components/charts/EnergyUsageChart";
+
 import { LoadingState } from "../../components/ui/LoadingState";
 import { StatCard } from "../../components/ui/StatCard";
 import { SurfaceCard } from "../../components/ui/SurfaceCard";
@@ -81,14 +80,6 @@ export function UserDashboardPage() {
     ];
   }, [data]);
 
-  const energyChartData = useMemo(() => {
-    return (data?.energy?.usageByRoom || []).map((item) => ({
-      period: item.name,
-      usage: Number(item.usageKwh || 0),
-      cost: Number(item.costEstimate || 0),
-    }));
-  }, [data]);
-
   if (loading) return <LoadingState />;
 
   return (
@@ -97,15 +88,6 @@ export function UserDashboardPage() {
         {metrics.map((metric) => (
           <StatCard key={metric.label} {...metric} />
         ))}
-      </div>
-
-      <div className="col-span-12 grid gap-5 xl:grid-cols-2">
-        <SurfaceCard className="p-6">
-          <EnergyUsageChart data={energyChartData} />
-        </SurfaceCard>
-        <SurfaceCard className="p-6">
-          <CostTrendChart data={energyChartData} />
-        </SurfaceCard>
       </div>
     </div>
   );
