@@ -30,10 +30,10 @@ export function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-brand-primary via-brand-secondary to-slate-950 p-4">
       <div className="mb-8 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-white/10 border border-white/20 text-white shadow-soft mb-6 backdrop-blur-md">
-          <Zap className="h-8 w-8" />
+        <div className="mx-auto flex h-24 w-auto items-center justify-center mb-6">
+          <img src="/logo.png" alt="AHEMS Logo" className="h-full max-w-[200px] object-contain drop-shadow-xl" />
         </div>
-        <h1 className="font-display text-4xl font-extrabold tracking-tight text-white">AHEMS</h1>
+        <h1 className="font-display text-4xl font-extrabold tracking-tight text-white hidden">AHEMS</h1>
         <p className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-brand-accent">Energy Module</p>
       </div>
 

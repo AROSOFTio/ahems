@@ -10,14 +10,8 @@ function SidebarBody({ onNavigate }) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-3 px-5 py-5">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-primary text-white shadow-soft">
-          <Zap className="h-5 w-5" />
-        </div>
-        <div>
-          <p className="font-display text-lg font-bold text-slate-950">AHEMS</p>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-brand-muted">Energy Module</p>
-        </div>
+      <div className="flex items-center justify-center px-5 py-6">
+        <img src="/logo.png" alt="AHEMS Logo" className="w-48 h-auto object-contain drop-shadow-sm" />
       </div>
 
       <nav className="mt-6 flex-1 space-y-2 overflow-y-auto px-4 pb-6">
